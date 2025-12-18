@@ -7,7 +7,7 @@
     display: flex;
     justify-content: center;
     align-items: center;
-    margin-bottom: 20px;
+    margin-bottom: 15px;
     padding-top: max(env(safe-area-inset-top), 10px);
     animation: fadeInDown 0.6s ease;
 }
@@ -24,22 +24,22 @@
 }
 
 .admin-logo-box img {
-    max-width: 120px;
+    max-width: 80px;
     width: 100%;
     height: auto;
     display: block;
-    filter: drop-shadow(0 0 15px rgba(255, 215, 0, 0.3));
+    filter: drop-shadow(0 0 10px rgba(255, 215, 0, 0.2));
 }
 
 /* Tablet e Desktop */
 @media (min-width: 768px) {
     .admin-logo-box {
-        margin-bottom: 25px;
+        margin-bottom: 20px;
         padding-top: 15px;
     }
     
     .admin-logo-box img {
-        max-width: 150px;
+        max-width: 100px;
     }
 }
 
