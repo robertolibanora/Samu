@@ -1,28 +1,17 @@
 #!/bin/bash
-
-# ============================================
-# SAMU – SAFE DEPLOY SCRIPT
-# ============================================
-
-set -e  # interrompe lo script al primo errore
-
-PROJECT_DIR="/var/www/samu"
-SERVICE_NAME="samu"
+set -e
 
 echo "🚀 Deploy SAMU started..."
 
-cd $PROJECT_DIR
+cd /var/www/samu
 
-echo "📦 Pulling latest code from GitHub..."
-git pull
+echo "📦 Fetching latest code from GitHub..."
+git fetch origin
 
-echo "🔄 Restarting systemd service ($SERVICE_NAME)..."
-sudo systemctl restart $SERVICE_NAME
+echo "🔄 Resetting local code to origin/main..."
+git reset --hard origin/main
 
-echo "⏱️ Waiting for service to stabilize..."
-sleep 2
-
-echo "🔍 Service status:"
-systemctl status $SERVICE_NAME --no-pager
+echo "♻️ Restarting SAMU service..."
+sudo systemctl restart samu
 
 echo "✅ Deploy completed successfully."
