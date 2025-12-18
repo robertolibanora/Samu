@@ -32,17 +32,31 @@
         .chart-container {
             background: rgba(255,255,255,0.08);
             border-radius: 12px;
-            padding: 20px;
+            padding: 15px;
             margin-bottom: 20px;
             position: relative;
-            height: 300px;
+            height: 250px;
+        }
+        
+        @media (min-width: 768px) {
+            .chart-container {
+                height: 300px;
+                padding: 20px;
+            }
         }
         
         .chart-title {
-            font-size: 16px;
+            font-size: 14px;
             font-weight: 600;
-            margin-bottom: 15px;
+            margin-bottom: 10px;
             text-align: center;
+        }
+        
+        @media (min-width: 768px) {
+            .chart-title {
+                font-size: 16px;
+                margin-bottom: 15px;
+            }
         }
         
         .stats-summary {
@@ -50,6 +64,11 @@
             grid-template-columns: repeat(2, 1fr);
             gap: 15px;
             margin-bottom: 25px;
+        }
+        
+        /* Padding per bottom-nav */
+        .app-content {
+            padding-bottom: 90px;
         }
     </style>
 </head>
@@ -155,7 +174,7 @@ new Chart(etaCtx, {
             borderWidth: 2
         }]
     },
-    options: {
+        options: {
         responsive: true,
         maintainAspectRatio: false,
         plugins: {
@@ -163,7 +182,10 @@ new Chart(etaCtx, {
                 position: 'bottom',
                 labels: {
                     color: '#fff',
-                    padding: 15
+                    padding: 10,
+                    font: {
+                        size: 11
+                    }
                 }
             }
         }
@@ -198,7 +220,10 @@ new Chart(orarioCtx, {
             y: {
                 beginAtZero: true,
                 ticks: {
-                    color: '#fff'
+                    color: '#fff',
+                    font: {
+                        size: 11
+                    }
                 },
                 grid: {
                     color: 'rgba(255, 255, 255, 0.1)'
@@ -206,7 +231,10 @@ new Chart(orarioCtx, {
             },
             x: {
                 ticks: {
-                    color: '#fff'
+                    color: '#fff',
+                    font: {
+                        size: 11
+                    }
                 },
                 grid: {
                     color: 'rgba(255, 255, 255, 0.1)'
@@ -287,7 +315,10 @@ new Chart(giornaliereCtx, {
         plugins: {
             legend: {
                 labels: {
-                    color: '#fff'
+                    color: '#fff',
+                    font: {
+                        size: 11
+                    }
                 }
             }
         },
@@ -295,7 +326,10 @@ new Chart(giornaliereCtx, {
             y: {
                 beginAtZero: true,
                 ticks: {
-                    color: '#fff'
+                    color: '#fff',
+                    font: {
+                        size: 11
+                    }
                 },
                 grid: {
                     color: 'rgba(255, 255, 255, 0.1)'
@@ -303,7 +337,10 @@ new Chart(giornaliereCtx, {
             },
             x: {
                 ticks: {
-                    color: '#fff'
+                    color: '#fff',
+                    font: {
+                        size: 11
+                    }
                 },
                 grid: {
                     color: 'rgba(255, 255, 255, 0.1)'
