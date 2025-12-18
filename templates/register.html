@@ -1,0 +1,78 @@
+<!DOCTYPE html>
+<html lang="it">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>Registrazione Evento</title>
+    <link rel="stylesheet" href="/static/style.css">
+</head>
+<body>
+<div class="overlay">
+
+    <!-- LOGO CENTRALE -->
+    <div class="logo-box">
+        <img src="/static/logo.png" alt="Logo Evento">
+    </div>
+
+    <h2>Registrazione SAMU</h2>
+
+    {% if error %}
+    <div class="error-message-box">
+        {{ error }}
+    </div>
+    {% endif %}
+
+    {% if not eventi or eventi|length == 0 %}
+    <div class="error-message-box">
+        Nessun evento disponibile al momento. Contatta l'amministratore.
+    </div>
+    {% else %}
+
+    <form method="POST">
+        <label>Seleziona Evento:</label>
+        <select name="evento_id" required style="width: 100%; padding: 12px; margin-top: 4px; margin-bottom: 18px; border: none; border-radius: 6px; background: rgba(255,255,255,0.1); color: #fff; font-size: 16px; -webkit-appearance: none; -moz-appearance: none; appearance: none;">
+            <option value="">-- Seleziona un evento --</option>
+            {% for evento in eventi %}
+            <option value="{{ evento[0] }}">
+                {{ evento[1] }} {% if evento[3] > 0 %}- €{{ "%.2f"|format(evento[3]) }}{% endif %}
+            </option>
+            {% endfor %}
+        </select>
+        {% if eventi|length > 0 %}
+        <div style="font-size: 12px; opacity: 0.7; margin-top: -15px; margin-bottom: 15px;">
+            {% for evento in eventi %}
+            {% if evento[2] %}
+            <div style="margin-bottom: 5px;"><strong>{{ evento[1] }}:</strong> {{ evento[2] }}</div>
+            {% endif %}
+            {% endfor %}
+        </div>
+        {% endif %}
+
+        <label>Nome:</label>
+        <input type="text" name="nome" required>
+
+        <label>Cognome:</label>
+        <input type="text" name="cognome" required>
+
+        <label>Data di nascita:</label>
+        <input type="date" name="data_nascita" required>
+
+        <label>Luogo di nascita:</label>
+        <input type="text" name="luogo_nascita" required>
+
+        <label>Telefono:</label>
+        <input type="tel" name="telefono" required>
+
+        <button type="submit">Registrati</button>
+    </form>
+
+    {% if success %}
+    <div class="success-message-box">
+        {{ success }}
+    </div>
+    {% endif %}
+
+    {% endif %}
+</div>
+</body>
+</html>

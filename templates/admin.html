@@ -1,0 +1,410 @@
+<!DOCTYPE html>
+<html lang="it">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>Admin - Dashboard</title>
+    <link rel="stylesheet" href="/static/style.css">
+    <style>
+        .stats-box {
+            background: rgba(255,255,255,0.08);
+            border-radius: 10px;
+            padding: 20px;
+            backdrop-filter: blur(4px);
+            text-align: center;
+            margin-bottom: 20px;
+        }
+
+        .stats-box .stat-value {
+            font-size: 36px;
+            font-weight: bold;
+            margin: 10px 0;
+            color: #00FFFF;
+        }
+
+        .eventi-section {
+            background: rgba(255,255,255,0.08);
+            border-radius: 10px;
+            padding: 20px;
+            backdrop-filter: blur(4px);
+            margin-bottom: 20px;
+        }
+
+        .evento-item {
+            background: rgba(255,255,255,0.05);
+            border-radius: 8px;
+            padding: 15px;
+            margin-bottom: 10px;
+            border-left: 3px solid transparent;
+            cursor: pointer;
+            transition: 0.2s;
+        }
+
+        .evento-item:hover {
+            background: rgba(255,255,255,0.1);
+        }
+
+        .evento-item.active {
+            border-left-color: #00FFFF;
+            background: rgba(0, 255, 255, 0.1);
+        }
+
+        .evento-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 8px;
+        }
+
+        .evento-nome {
+            font-weight: 600;
+            font-size: 16px;
+            color: #fff;
+        }
+
+        .evento-badge {
+            font-size: 12px;
+            padding: 4px 10px;
+            border-radius: 12px;
+            background: rgba(0, 255, 255, 0.2);
+            color: #00FFFF;
+        }
+
+        .evento-badge.inactive {
+            background: rgba(255, 255, 255, 0.2);
+            color: #fff;
+        }
+
+        .evento-details {
+            font-size: 13px;
+            opacity: 0.8;
+            margin-top: 8px;
+        }
+
+        .btn-crea-evento {
+            width: 100%;
+            padding: 12px;
+            background: #00BFFF;
+            border: none;
+            border-radius: 6px;
+            color: #fff;
+            cursor: pointer;
+            font-size: 14px;
+            font-weight: 500;
+            transition: 0.2s;
+            margin-bottom: 15px;
+        }
+
+        .btn-crea-evento:hover {
+            background: #0099CC;
+        }
+
+        .search-section {
+            margin-top: 30px;
+        }
+
+        .search-input {
+            width: 100%;
+            padding: 12px;
+            margin-bottom: 15px;
+            border: none;
+            border-radius: 6px;
+            background: rgba(255,255,255,0.1);
+            color: #fff;
+            font-size: 16px;
+            border: 1px solid rgba(0, 255, 255, 0.3);
+        }
+
+        .search-input:focus {
+            outline: none;
+            border-color: #00FFFF;
+            box-shadow: 0 0 10px rgba(0, 255, 255, 0.3);
+        }
+
+        .search-input::placeholder {
+            color: #bbb;
+        }
+
+        .list-view {
+            width: 100%;
+            margin-top: 15px;
+        }
+
+        .list-item {
+            background: rgba(255,255,255,0.08);
+            border-radius: 8px;
+            padding: 12px 15px;
+            margin-bottom: 10px;
+            backdrop-filter: blur(4px);
+            border-left: 3px solid #00FFFF;
+        }
+
+        .list-item-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 8px;
+        }
+
+        .list-item-name {
+            font-weight: 600;
+            font-size: 16px;
+            color: #fff;
+        }
+
+        .list-item-details {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+            gap: 8px;
+            font-size: 13px;
+            opacity: 0.8;
+            margin-top: 8px;
+        }
+
+        .list-item-detail {
+            display: flex;
+            flex-direction: column;
+        }
+
+        .list-item-detail-label {
+            font-size: 11px;
+            opacity: 0.6;
+            text-transform: uppercase;
+            margin-bottom: 2px;
+        }
+
+        .list-item-detail-value {
+            font-size: 13px;
+            opacity: 0.9;
+        }
+
+        .no-results {
+            text-align: center;
+            padding: 40px 20px;
+            opacity: 0.6;
+            background: rgba(255,255,255,0.05);
+            border-radius: 10px;
+        }
+
+        .btn-delete {
+            padding: 6px 12px;
+            border: none;
+            border-radius: 6px;
+            background: rgba(255, 0, 0, 0.3);
+            color: #fff;
+            cursor: pointer;
+            font-size: 12px;
+            margin-top: 8px;
+            transition: 0.2s;
+            border: 1px solid rgba(255, 0, 0, 0.5);
+        }
+
+        .btn-delete:hover {
+            background: rgba(255, 0, 0, 0.5);
+        }
+
+        .list-item-actions {
+            margin-top: 10px;
+            display: flex;
+            gap: 8px;
+        }
+
+        @media (min-width: 768px) {
+            .list-item {
+                padding: 15px 20px;
+            }
+
+            .list-item-details {
+                grid-template-columns: repeat(4, 1fr);
+            }
+        }
+    </style>
+</head>
+<body>
+<div class="overlay">
+    <h2>Dashboard Admin</h2>
+
+    {% if user_name %}
+    <div style="text-align: center; margin-bottom: 20px; padding: 10px; background: rgba(255, 255, 255, 0.05); border-radius: 8px; font-size: 14px; opacity: 0.8;">
+        Accesso come: <strong>{{ user_name }}</strong>
+    </div>
+    {% endif %}
+
+    <!-- Pulsante Crea Evento -->
+    <a href="/admin/evento/crea" style="text-decoration: none;">
+        <button class="btn-crea-evento">➕ Crea Nuovo Evento</button>
+    </a>
+
+    <!-- Sezione Eventi (Storico) -->
+    <div class="eventi-section">
+        <h3 style="margin-top: 0;">Storico Eventi</h3>
+        {% if eventi and eventi|length > 0 %}
+        {% for evento in eventi %}
+        <div class="evento-item {% if evento_corrente and evento[0] == evento_corrente[0] %}active{% endif %}" 
+             onclick="window.location.href='/admin?evento_id={{ evento[0] }}'">
+            <div class="evento-header">
+                <div class="evento-nome">{{ evento[1] }}</div>
+                <div class="evento-badge {% if evento[5] == 0 %}inactive{% endif %}">
+                    {% if evento[5] == 1 %}Attivo{% else %}Chiuso{% endif %}
+                </div>
+            </div>
+            <div class="evento-details">
+                {% if evento[2] %}<div style="margin-bottom: 5px;">{{ evento[2] }}</div>{% endif %}
+                <div style="display: flex; justify-content: space-between; font-size: 12px; opacity: 0.7;">
+                    <span>Prezzo: €{{ "%.2f"|format(evento[3]) }}</span>
+                    <span>Registrati: {{ evento[6] }}</span>
+                </div>
+                <div style="font-size: 11px; opacity: 0.6; margin-top: 5px;">
+                    Creato: {{ evento[4] }}
+                </div>
+            </div>
+        </div>
+        {% endfor %}
+        {% else %}
+        <div class="no-results">Nessun evento creato. Crea il primo evento!</div>
+        {% endif %}
+    </div>
+
+    <!-- Evento Corrente e Registrazioni -->
+    {% if evento_corrente %}
+    <div class="stats-box">
+        <h3 style="margin: 0 0 10px 0; font-size: 14px; opacity: 0.7; text-transform: uppercase; font-weight: 400;">
+            Evento: {{ evento_corrente[1] }}
+        </h3>
+        <div class="stat-value">{{ totale_iscritti }}</div>
+        <p style="font-size: 12px; opacity: 0.7; margin-top: 5px;">Registrati</p>
+    </div>
+
+    <!-- Lista Registrati con Ricerca -->
+    <div class="search-section">
+        <h3>Lista Registrati</h3>
+        
+        <input type="text" 
+               id="search-input" 
+               class="search-input" 
+               placeholder="Cerca per nome, cognome, telefono...">
+        
+        <div class="list-view" id="registrati-list">
+            {% if registrati|length == 0 %}
+            <div class="no-results">Nessun registrato per questo evento</div>
+            {% else %}
+            {% for r in registrati %}
+            <div class="list-item" 
+                 data-id="{{ r[0] }}"
+                 data-nome="{{ r[1]|lower }}" 
+                 data-cognome="{{ r[2]|lower }}" 
+                 data-telefono="{{ r[5] }}">
+                <div class="list-item-header">
+                    <div class="list-item-name">{{ r[1] }} {{ r[2] }}</div>
+                </div>
+                <div class="list-item-details">
+                    <div class="list-item-detail">
+                        <span class="list-item-detail-label">Data nascita</span>
+                        <span class="list-item-detail-value">{{ r[3] }}</span>
+                    </div>
+                    <div class="list-item-detail">
+                        <span class="list-item-detail-label">Luogo nascita</span>
+                        <span class="list-item-detail-value">{{ r[4] }}</span>
+                    </div>
+                    <div class="list-item-detail">
+                        <span class="list-item-detail-label">Telefono</span>
+                        <span class="list-item-detail-value">{{ r[5] }}</span>
+                    </div>
+                    <div class="list-item-detail">
+                        <span class="list-item-detail-label">Data registrazione</span>
+                        <span class="list-item-detail-value">{{ r[6] }}</span>
+                    </div>
+                </div>
+                <div class="list-item-actions">
+                    <button class="btn-delete" onclick="deleteRegistrazione({{ r[0] }}, '{{ r[1] }} {{ r[2] }}')">
+                        🗑️ Elimina
+                    </button>
+                </div>
+            </div>
+            {% endfor %}
+            {% endif %}
+        </div>
+    </div>
+    {% else %}
+    <div class="no-results" style="margin-top: 20px;">
+        Nessun evento attivo. Crea un nuovo evento per iniziare!
+    </div>
+    {% endif %}
+
+    <div class="logout-link">
+        <a href="/admin/logout">Logout</a>
+    </div>
+</div>
+<script>
+// Elimina registrazione
+async function deleteRegistrazione(personaId, nomeCompleto) {
+    if (!confirm(`Sei sicuro di voler eliminare la registrazione di "${nomeCompleto}"?\n\nQuesta azione non può essere annullata!`)) {
+        return;
+    }
+    
+    try {
+        const response = await fetch('/admin/delete', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify({ persona_id: personaId })
+        });
+        
+        const data = await response.json();
+        
+        if (data.ok) {
+            alert(data.message);
+            window.location.reload();
+        } else {
+            alert('Errore: ' + (data.error || 'Impossibile eliminare la registrazione'));
+        }
+    } catch (error) {
+        alert('Errore di connessione');
+    }
+}
+
+// Ricerca lato client
+const searchInput = document.getElementById('search-input');
+if (searchInput) {
+    searchInput.addEventListener('input', function(e) {
+        const query = e.target.value.toLowerCase().trim();
+        const items = document.querySelectorAll('.list-item');
+        let visibleCount = 0;
+        
+        items.forEach(item => {
+            const nome = item.getAttribute('data-nome') || '';
+            const cognome = item.getAttribute('data-cognome') || '';
+            const telefono = item.getAttribute('data-telefono') || '';
+            
+            const matches = !query || 
+                nome.includes(query) || 
+                cognome.includes(query) || 
+                telefono.includes(query);
+            
+            if (matches) {
+                item.style.display = 'block';
+                visibleCount++;
+            } else {
+                item.style.display = 'none';
+            }
+        });
+        
+        // Mostra messaggio se nessun risultato
+        let noResults = document.getElementById('no-results-msg');
+        if (query && visibleCount === 0) {
+            if (!noResults) {
+                noResults = document.createElement('div');
+                noResults.id = 'no-results-msg';
+                noResults.className = 'no-results';
+                noResults.textContent = 'Nessun risultato trovato';
+                document.getElementById('registrati-list').appendChild(noResults);
+            }
+        } else if (noResults) {
+            noResults.remove();
+        }
+    });
+}
+</script>
+</body>
+</html>

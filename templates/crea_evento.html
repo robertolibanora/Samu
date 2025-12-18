@@ -1,0 +1,38 @@
+<!DOCTYPE html>
+<html lang="it">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>Crea Evento - Admin</title>
+    <link rel="stylesheet" href="/static/style.css">
+</head>
+<body>
+<div class="overlay">
+    <h2>Crea Nuovo Evento</h2>
+
+    {% if error %}
+    <div class="error-message-box">
+        {{ error }}
+    </div>
+    {% endif %}
+
+    <form method="POST">
+        <label>Nome Evento:</label>
+        <input type="text" name="nome" required maxlength="200" placeholder="Es: Concerto Rock 2025">
+
+        <label>Descrizione:</label>
+        <textarea name="descrizione" rows="4" style="width: 100%; padding: 12px; margin-top: 4px; margin-bottom: 18px; border: none; border-radius: 6px; background: rgba(255,255,255,0.1); color: #fff; font-size: 16px; font-family: inherit; resize: vertical;" placeholder="Descrizione opzionale dell'evento..."></textarea>
+
+        <label>Prezzo (€):</label>
+        <input type="number" name="prezzo" step="0.01" min="0" value="0" placeholder="0.00">
+
+        <button type="submit">Crea Evento</button>
+    </form>
+
+    <div class="logout-link" style="margin-top: 20px;">
+        <a href="/admin">← Torna alla Dashboard</a>
+    </div>
+</div>
+</body>
+</html>
+

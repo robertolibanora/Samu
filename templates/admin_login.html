@@ -1,0 +1,50 @@
+<!DOCTYPE html>
+<html lang="it">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <meta name="theme-color" content="#000000">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+    <meta name="apple-mobile-web-app-title" content="Reg Evento">
+    <title>Login Sistema</title>
+    <link rel="stylesheet" href="/static/style.css">
+    <link rel="manifest" href="/manifest.json">
+    <link rel="apple-touch-icon" href="/static/icon.png">
+</head>
+<body>
+<div class="overlay">
+    <h2>Accesso Sistema</h2>
+
+    <form method="POST" class="login-form">
+        <label>Username:</label>
+        <input type="text" name="username" required autofocus>
+        
+        <label>Password:</label>
+        <input type="password" name="password" required>
+        
+        {% if error %}
+        <p class="error-message">{{ error }}</p>
+        {% endif %}
+
+        <button type="submit">Accedi</button>
+    </form>
+</div>
+
+<script>
+// Registra Service Worker per PWA
+if ('serviceWorker' in navigator) {
+    window.addEventListener('load', () => {
+        navigator.serviceWorker.register('/sw.js')
+            .then((registration) => {
+                console.log('Service Worker registrato:', registration.scope);
+            })
+            .catch((error) => {
+                console.log('Service Worker registrazione fallita:', error);
+            });
+    });
+}
+</script>
+</body>
+</html>
+
