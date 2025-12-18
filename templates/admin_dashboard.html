@@ -31,14 +31,12 @@
 <body>
 <div class="overlay">
     <div class="app-content">
-    <h2>Dashboard</h2>
-
-    {% if user_name %}
-    <div class="user-badge">
-        <span></span>
-        <span>{{ user_name }}</span>
+    <!-- Logo Admin -->
+    <div class="admin-logo-box">
+        <img src="/static/logoadmin.png" alt="Logo Admin SAMU" onerror="this.style.display='none'">
     </div>
-    {% endif %}
+    
+    <h2>Dashboard</h2>
 
     <!-- Prossimo Evento -->
     {% if prossimo_evento %}

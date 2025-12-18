@@ -2,21 +2,50 @@
    ADMIN STYLES - Mobile First
    ============================================ */
 
-/* User Badge - Elegant Gold */
-.user-badge {
-    display: inline-flex;
+/* Admin Logo - Mobile First */
+.admin-logo-box {
+    display: flex;
+    justify-content: center;
     align-items: center;
-    gap: 10px;
-    padding: 10px 18px;
-    background: linear-gradient(135deg, rgba(255, 215, 0, 0.12) 0%, rgba(255, 215, 0, 0.06) 100%);
-    border-radius: 24px;
-    border: 1.5px solid rgba(255, 215, 0, 0.4);
     margin-bottom: 20px;
-    font-size: 14px;
-    font-weight: 600;
-    color: #FFD700;
-    box-shadow: 0 2px 12px rgba(255, 215, 0, 0.15),
-                inset 0 1px 0 rgba(255, 255, 255, 0.1);
+    padding-top: max(env(safe-area-inset-top), 10px);
+    animation: fadeInDown 0.6s ease;
+}
+
+@keyframes fadeInDown {
+    from {
+        opacity: 0;
+        transform: translateY(-20px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+.admin-logo-box img {
+    max-width: 120px;
+    width: 100%;
+    height: auto;
+    display: block;
+    filter: drop-shadow(0 0 15px rgba(255, 215, 0, 0.3));
+}
+
+/* Tablet e Desktop */
+@media (min-width: 768px) {
+    .admin-logo-box {
+        margin-bottom: 25px;
+        padding-top: 15px;
+    }
+    
+    .admin-logo-box img {
+        max-width: 150px;
+    }
+}
+
+/* User Badge - Elegant Gold (deprecato, mantenuto per retrocompatibilità) */
+.user-badge {
+    display: none; /* Nascosto come richiesto */
 }
 
 /* Prossimo Evento Card - Elegant */
