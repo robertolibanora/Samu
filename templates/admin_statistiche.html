@@ -295,29 +295,71 @@ new Chart(eventoCtx, {
 // Grafico Giornaliero
 {% if giornaliere_stats|length > 0 %}
 const giornaliereCtx = document.getElementById('giornaliereChart').getContext('2d');
+
 new Chart(giornaliereCtx, {
     type: 'line',
     data: {
-        labels: [{% for stat in giornaliere_stats %}'{{ stat[0] }}'{% if not loop.last %},{% endif %}{% endfor %}],
+        labels: [{% for stat in giornaliere_stats %}
+            {% set date_parts = stat[0].split('-') %}
+            '{{ date_parts[2] }}/{{ date_parts[1] }}'{% if not loop.last %},{% endif %}
+        {% endfor %}],
         datasets: [{
-            label: 'Registrazioni',
+            label: 'Numero di Persone',
             data: [{% for stat in giornaliere_stats %}{{ stat[1] }}{% if not loop.last %},{% endif %}{% endfor %}],
             borderColor: '#FFD700',
-            backgroundColor: 'rgba(255, 215, 0, 0.1)',
+            backgroundColor: 'rgba(255, 215, 0, 0.15)',
             borderWidth: 3,
             fill: true,
-            tension: 0.4
+            tension: 0.4,
+            pointRadius: 5,
+            pointHoverRadius: 7,
+            pointBackgroundColor: '#FFD700',
+            pointBorderColor: '#fff',
+            pointBorderWidth: 2,
+            pointHoverBackgroundColor: '#FFA500',
+            pointHoverBorderColor: '#fff'
         }]
     },
     options: {
         responsive: true,
         maintainAspectRatio: false,
+        interaction: {
+            intersect: false,
+            mode: 'index'
+        },
         plugins: {
             legend: {
+                display: true,
+                position: 'top',
                 labels: {
                     color: '#fff',
                     font: {
-                        size: 11
+                        size: 12,
+                        weight: 'bold'
+                    },
+                    padding: 15,
+                    usePointStyle: true
+                }
+            },
+            tooltip: {
+                backgroundColor: 'rgba(0, 0, 0, 0.8)',
+                titleColor: '#FFD700',
+                bodyColor: '#fff',
+                borderColor: '#FFD700',
+                borderWidth: 1,
+                padding: 12,
+                displayColors: true,
+                callbacks: {
+                    title: function(context) {
+                        const dataIndex = context[0].dataIndex;
+                        const fullDate = [{% for stat in giornaliere_stats %}'{{ stat[0] }}'{% if not loop.last %},{% endif %}{% endfor %}][dataIndex];
+                        const [anno, mese, giorno] = fullDate.split('-');
+                        const mesi = ['Gennaio', 'Febbraio', 'Marzo', 'Aprile', 'Maggio', 'Giugno', 
+                                     'Luglio', 'Agosto', 'Settembre', 'Ottobre', 'Novembre', 'Dicembre'];
+                        return `${giorno} ${mesi[parseInt(mese) - 1]} ${anno}`;
+                    },
+                    label: function(context) {
+                        return `Persone: ${context.parsed.y}`;
                     }
                 }
             }
@@ -327,10 +369,10 @@ new Chart(giornaliereCtx, {
                 beginAtZero: true,
                 title: {
                     display: true,
-                    text: 'Totale Persone',
+                    text: 'Numero di Persone',
                     color: '#fff',
                     font: {
-                        size: 12,
+                        size: 13,
                         weight: 'bold'
                     },
                     padding: {
@@ -342,10 +384,13 @@ new Chart(giornaliereCtx, {
                     color: '#fff',
                     font: {
                         size: 11
-                    }
+                    },
+                    stepSize: 1,
+                    precision: 0
                 },
                 grid: {
-                    color: 'rgba(255, 255, 255, 0.1)'
+                    color: 'rgba(255, 255, 255, 0.15)',
+                    lineWidth: 1
                 }
             },
             x: {
@@ -354,7 +399,7 @@ new Chart(giornaliereCtx, {
                     text: 'Data',
                     color: '#fff',
                     font: {
-                        size: 12,
+                        size: 13,
                         weight: 'bold'
                     },
                     padding: {
@@ -365,11 +410,14 @@ new Chart(giornaliereCtx, {
                 ticks: {
                     color: '#fff',
                     font: {
-                        size: 11
-                    }
+                        size: 10
+                    },
+                    maxRotation: 45,
+                    minRotation: 0
                 },
                 grid: {
-                    color: 'rgba(255, 255, 255, 0.1)'
+                    color: 'rgba(255, 255, 255, 0.1)',
+                    display: true
                 }
             }
         }
