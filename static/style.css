@@ -26,13 +26,14 @@ body {
     margin: 0;
     padding: 0;
     font-family: -apple-system, BlinkMacSystemFont, 'SF Pro Display', 'SF Pro Text', 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
-    background: #000 url("/static/sfondo.png") center/cover no-repeat fixed;
+    background: #000000 url("/static/sfondo.png") center/cover no-repeat fixed;
     background-attachment: fixed;
-    color: #fff;
+    color: #ffffff;
     font-size: 16px;
-    line-height: 1.5;
+    line-height: 1.6;
     -webkit-font-smoothing: antialiased;
     -moz-osx-font-smoothing: grayscale;
+    text-rendering: optimizeLegibility;
     /* Mobile app feel */
     height: 100vh;
     height: 100dvh; /* Dynamic viewport height */
@@ -45,9 +46,9 @@ body {
     overscroll-behavior-y: contain;
 }
 
-/* Overlay mobile app style */
+/* Overlay mobile app style - Elegant Black & Gold */
 .overlay {
-    background: rgba(0, 0, 0, 0.75);
+    background: linear-gradient(135deg, rgba(0, 0, 0, 0.85) 0%, rgba(20, 15, 5, 0.9) 100%);
     min-height: 100vh;
     min-height: 100dvh;
     padding: 0;
@@ -60,6 +61,8 @@ body {
     padding-bottom: max(env(safe-area-inset-bottom), 0);
     /* Mobile app container */
     position: relative;
+    /* Elegant gold accent border */
+    box-shadow: inset 0 0 100px rgba(255, 215, 0, 0.03);
 }
 
 /* Mobile app content container */
@@ -70,11 +73,11 @@ body {
     padding-bottom: max(100px, env(safe-area-inset-bottom) + 80px);
 }
 
-/* Titoli - Mobile App Style */
+/* Titoli - Elegant Black & Gold Style */
 h2 {
     text-align: center;
-    font-weight: 600;
-    letter-spacing: -0.5px;
+    font-weight: 700;
+    letter-spacing: 0.5px;
     margin: 0 0 25px 0;
     font-size: 28px;
     line-height: 1.2;
@@ -83,13 +86,19 @@ h2 {
     position: sticky;
     top: 0;
     z-index: 10;
-    background: rgba(0, 0, 0, 0.8);
-    backdrop-filter: blur(20px);
-    -webkit-backdrop-filter: blur(20px);
+    background: linear-gradient(180deg, rgba(0, 0, 0, 0.95) 0%, rgba(0, 0, 0, 0.85) 100%);
+    backdrop-filter: blur(30px) saturate(180%);
+    -webkit-backdrop-filter: blur(30px) saturate(180%);
     padding-top: max(15px, env(safe-area-inset-top) + 10px);
     padding-bottom: 15px;
     margin-bottom: 20px;
-    border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+    border-bottom: 2px solid;
+    border-image: linear-gradient(90deg, transparent, rgba(255, 215, 0, 0.4), transparent) 1;
+    /* Elegant gold text gradient */
+    background-clip: text;
+    -webkit-background-clip: text;
+    color: #ffffff;
+    text-shadow: 0 0 30px rgba(255, 215, 0, 0.2), 0 2px 10px rgba(0, 0, 0, 0.5);
 }
 
 h3 {
@@ -106,14 +115,33 @@ h3 {
 form {
     width: 100%;
     margin: 0 auto 20px auto;
-    padding: 20px;
-    background: rgba(255, 255, 255, 0.06);
-    border-radius: 16px;
-    backdrop-filter: blur(20px);
-    -webkit-backdrop-filter: blur(20px);
-    border: 1px solid rgba(255, 255, 255, 0.1);
-    /* Mobile app card style */
-    box-shadow: 0 8px 32px rgba(0, 0, 0, 0.3);
+    padding: 24px;
+    background: linear-gradient(135deg, rgba(255, 255, 255, 0.05) 0%, rgba(255, 255, 255, 0.02) 100%);
+    border-radius: 20px;
+    backdrop-filter: blur(30px) saturate(180%);
+    -webkit-backdrop-filter: blur(30px) saturate(180%);
+    border: 1px solid rgba(255, 215, 0, 0.15);
+    /* Elegant gold shadow */
+    box-shadow: 0 8px 32px rgba(0, 0, 0, 0.4), 
+                0 0 0 1px rgba(255, 215, 0, 0.1),
+                inset 0 1px 0 rgba(255, 255, 255, 0.05);
+    position: relative;
+    overflow: hidden;
+}
+
+form::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: -100%;
+    width: 100%;
+    height: 100%;
+    background: linear-gradient(90deg, transparent, rgba(255, 215, 0, 0.05), transparent);
+    transition: left 0.6s ease;
+}
+
+form:hover::before {
+    left: 100%;
 }
 
 label {
@@ -128,32 +156,36 @@ input,
 select,
 textarea {
     width: 100%;
-    padding: 16px 14px; /* Touch target minimo 48px */
+    padding: 16px 18px; /* Touch target minimo 48px */
     margin-top: 6px;
     margin-bottom: 20px;
     border: none;
-    border-radius: 12px;
-    background: rgba(255, 255, 255, 0.08);
-    color: #fff;
+    border-radius: 14px;
+    background: linear-gradient(135deg, rgba(255, 255, 255, 0.08) 0%, rgba(255, 255, 255, 0.04) 100%);
+    color: #ffffff;
     font-size: 16px; /* Previene zoom automatico su iOS */
     font-family: inherit;
     -webkit-appearance: none;
     -moz-appearance: none;
     appearance: none;
-    transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
-    /* Mobile app input style */
-    border: 1px solid rgba(255, 255, 255, 0.1);
-    box-shadow: inset 0 2px 4px rgba(0, 0, 0, 0.2);
+    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+    /* Elegant gold border */
+    border: 1.5px solid rgba(255, 215, 0, 0.15);
+    box-shadow: inset 0 2px 8px rgba(0, 0, 0, 0.3),
+                0 1px 0 rgba(255, 255, 255, 0.05);
 }
 
 input:focus,
 select:focus,
 textarea:focus {
     outline: none;
-    background: rgba(255, 255, 255, 0.12);
-    border: 2px solid rgba(255, 215, 0, 0.6);
-    box-shadow: 0 0 0 4px rgba(255, 215, 0, 0.15), inset 0 2px 4px rgba(0, 0, 0, 0.2);
-    transform: scale(1.01);
+    background: linear-gradient(135deg, rgba(255, 255, 255, 0.12) 0%, rgba(255, 255, 255, 0.08) 100%);
+    border: 2px solid rgba(255, 215, 0, 0.7);
+    box-shadow: 0 0 0 4px rgba(255, 215, 0, 0.2),
+                0 0 20px rgba(255, 215, 0, 0.15),
+                inset 0 2px 8px rgba(0, 0, 0, 0.3),
+                inset 0 1px 0 rgba(255, 215, 0, 0.1);
+    transform: translateY(-1px);
 }
 
 input::placeholder,
@@ -182,41 +214,65 @@ textarea {
    ============================================ */
 button {
     width: 100%;
-    min-height: 52px; /* Touch target ottimale per mobile */
-    padding: 16px 24px;
-    background: linear-gradient(135deg, #FFD700, #FFA500);
+    min-height: 56px; /* Touch target ottimale per mobile */
+    padding: 18px 28px;
+    background: linear-gradient(135deg, #FFD700 0%, #FFA500 50%, #FFD700 100%);
+    background-size: 200% 100%;
     border: none;
-    color: #000;
-    border-radius: 14px;
+    color: #000000;
+    border-radius: 16px;
     cursor: pointer;
-    transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
-    font-size: 17px;
-    font-weight: 600;
+    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+    font-size: 16px;
+    font-weight: 700;
     font-family: inherit;
     -webkit-tap-highlight-color: transparent;
     touch-action: manipulation;
-    /* Mobile app button style */
-    box-shadow: 0 4px 14px rgba(255, 215, 0, 0.3);
-    letter-spacing: 0.3px;
+    /* Elegant gold button style */
+    box-shadow: 0 6px 20px rgba(255, 215, 0, 0.4),
+                0 0 0 1px rgba(255, 215, 0, 0.2),
+                inset 0 1px 0 rgba(255, 255, 255, 0.3),
+                inset 0 -1px 0 rgba(0, 0, 0, 0.2);
+    letter-spacing: 0.5px;
     text-transform: uppercase;
-    font-size: 15px;
     /* Centra il contenuto */
     display: flex;
     align-items: center;
     justify-content: center;
     text-align: center;
-    gap: 8px;
+    gap: 10px;
+    position: relative;
+    overflow: hidden;
+}
+
+button::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: -100%;
+    width: 100%;
+    height: 100%;
+    background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.3), transparent);
+    transition: left 0.5s ease;
+}
+
+button:hover::before {
+    left: 100%;
 }
 
 button:active {
-    transform: scale(0.98);
-    box-shadow: 0 2px 8px rgba(255, 215, 0, 0.2);
+    transform: scale(0.97) translateY(1px);
+    box-shadow: 0 2px 10px rgba(255, 215, 0, 0.3),
+                inset 0 2px 4px rgba(0, 0, 0, 0.2);
 }
 
 button:hover {
-    background: linear-gradient(135deg, #FFA500, #FFD700);
-    box-shadow: 0 6px 20px rgba(255, 215, 0, 0.4);
-    transform: translateY(-1px);
+    background-position: 100% 0;
+    box-shadow: 0 8px 28px rgba(255, 215, 0, 0.5),
+                0 0 0 1px rgba(255, 215, 0, 0.3),
+                inset 0 1px 0 rgba(255, 255, 255, 0.4),
+                inset 0 -1px 0 rgba(0, 0, 0, 0.2);
+    transform: translateY(-2px);
 }
 
 button:disabled {
@@ -229,7 +285,9 @@ button:disabled {
 
 button:focus {
     outline: none;
-    box-shadow: 0 0 0 4px rgba(255, 215, 0, 0.3);
+    box-shadow: 0 0 0 4px rgba(255, 215, 0, 0.4),
+                0 8px 28px rgba(255, 215, 0, 0.5),
+                0 0 0 1px rgba(255, 215, 0, 0.3);
 }
 
 /* ============================================
@@ -263,27 +321,62 @@ button:focus {
 .error-message-box {
     width: 100%;
     margin: 0 auto 20px auto;
-    padding: 15px;
-    background: rgba(255, 215, 0, 0.15);
-    border: 1px solid rgba(255, 215, 0, 0.5);
-    border-radius: 8px;
+    padding: 18px 20px;
+    background: linear-gradient(135deg, rgba(255, 215, 0, 0.15) 0%, rgba(255, 215, 0, 0.08) 100%);
+    border: 2px solid rgba(255, 215, 0, 0.5);
+    border-radius: 12px;
     color: #FFD700;
     text-align: center;
-    font-size: 14px;
-    line-height: 1.5;
+    font-size: 15px;
+    line-height: 1.6;
+    box-shadow: 0 4px 16px rgba(255, 215, 0, 0.2),
+                inset 0 1px 0 rgba(255, 255, 255, 0.1);
+    position: relative;
+    overflow: hidden;
+}
+
+.error-message-box::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 4px;
+    height: 100%;
+    background: linear-gradient(180deg, #FFD700, #FFA500);
 }
 
 .success-message-box {
     width: 100%;
     margin: 0 auto 20px auto;
-    padding: 15px;
-    background: rgba(255, 215, 0, 0.2);
-    border: 1px solid rgba(255, 215, 0, 0.5);
-    border-radius: 8px;
+    padding: 18px 20px;
+    background: linear-gradient(135deg, rgba(255, 215, 0, 0.2) 0%, rgba(255, 215, 0, 0.12) 100%);
+    border: 2px solid rgba(255, 215, 0, 0.6);
+    border-radius: 12px;
     color: #FFD700;
     text-align: center;
-    font-size: 14px;
-    line-height: 1.5;
+    font-size: 15px;
+    line-height: 1.6;
+    box-shadow: 0 4px 20px rgba(255, 215, 0, 0.25),
+                inset 0 1px 0 rgba(255, 255, 255, 0.15);
+    position: relative;
+    overflow: hidden;
+}
+
+.success-message-box::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 3px;
+    background: linear-gradient(90deg, #FFD700, #FFA500, #FFD700);
+    background-size: 200% 100%;
+    animation: shimmer 2s linear infinite;
+}
+
+@keyframes shimmer {
+    0% { background-position: -200% 0; }
+    100% { background-position: 200% 0; }
 }
 
 /* ============================================
@@ -292,12 +385,15 @@ button:focus {
 .stats-box {
     width: 100%;
     margin: 0 auto 20px auto;
-    padding: 20px 15px;
-    background: rgba(255, 255, 255, 0.05);
-    border-radius: 10px;
-    backdrop-filter: blur(4px);
-    -webkit-backdrop-filter: blur(4px);
+    padding: 24px 20px;
+    background: linear-gradient(135deg, rgba(255, 255, 255, 0.06) 0%, rgba(255, 255, 255, 0.03) 100%);
+    border-radius: 16px;
+    backdrop-filter: blur(20px) saturate(180%);
+    -webkit-backdrop-filter: blur(20px) saturate(180%);
+    border: 1px solid rgba(255, 215, 0, 0.15);
     text-align: center;
+    box-shadow: 0 4px 16px rgba(0, 0, 0, 0.3),
+                inset 0 1px 0 rgba(255, 255, 255, 0.05);
 }
 
 .stats-box p {
@@ -307,9 +403,10 @@ button:focus {
 }
 
 .stats-box strong {
-    font-size: 17px;
-    color: #fff;
-    font-weight: 600;
+    font-size: 18px;
+    color: #FFD700;
+    font-weight: 700;
+    text-shadow: 0 0 10px rgba(255, 215, 0, 0.3);
 }
 
 /* ============================================
@@ -364,12 +461,14 @@ table {
     width: 100%;
     margin: 0 auto;
     border-collapse: collapse;
-    background: rgba(255, 255, 255, 0.06);
-    border-radius: 10px;
+    background: linear-gradient(135deg, rgba(255, 255, 255, 0.06) 0%, rgba(255, 255, 255, 0.03) 100%);
+    border-radius: 16px;
     overflow: hidden;
-    backdrop-filter: blur(4px);
-    -webkit-backdrop-filter: blur(4px);
+    backdrop-filter: blur(20px) saturate(180%);
+    -webkit-backdrop-filter: blur(20px) saturate(180%);
+    border: 1px solid rgba(255, 215, 0, 0.15);
     font-size: 14px;
+    box-shadow: 0 4px 16px rgba(0, 0, 0, 0.3);
 }
 
 th, td {
@@ -379,10 +478,13 @@ th, td {
 }
 
 th {
-    background: rgba(255, 255, 255, 0.1);
-    font-weight: 600;
+    background: linear-gradient(135deg, rgba(255, 215, 0, 0.15) 0%, rgba(255, 215, 0, 0.08) 100%);
+    font-weight: 700;
     font-size: 12px;
     text-transform: uppercase;
+    color: #FFD700;
+    letter-spacing: 0.5px;
+    border-bottom: 2px solid rgba(255, 215, 0, 0.3);
 }
 
 td {
@@ -576,28 +678,31 @@ td {
    FOOTER
    ============================================ */
 .app-footer {
-    background: rgba(0, 0, 0, 0.4);
-    backdrop-filter: blur(10px);
-    -webkit-backdrop-filter: blur(10px);
-    border-top: 1px solid rgba(255, 215, 0, 0.1);
-    padding: 15px 20px;
+    background: linear-gradient(180deg, rgba(0, 0, 0, 0.6) 0%, rgba(0, 0, 0, 0.8) 100%);
+    backdrop-filter: blur(20px) saturate(180%);
+    -webkit-backdrop-filter: blur(20px) saturate(180%);
+    border-top: 2px solid;
+    border-image: linear-gradient(90deg, transparent, rgba(255, 215, 0, 0.3), transparent) 1;
+    padding: 18px 20px;
     margin-top: 30px;
     text-align: center;
     position: relative;
     z-index: 5;
+    box-shadow: 0 -4px 16px rgba(0, 0, 0, 0.3);
 }
 
 .app-footer p {
     margin: 0;
-    font-size: 12px;
-    color: rgba(255, 255, 255, 0.6);
-    letter-spacing: 0.5px;
+    font-size: 13px;
+    color: rgba(255, 255, 255, 0.7);
+    letter-spacing: 0.8px;
 }
 
 .app-footer .footer-name {
     color: #FFD700;
-    font-weight: 500;
-    opacity: 0.9;
+    font-weight: 600;
+    text-shadow: 0 0 10px rgba(255, 215, 0, 0.4);
+    opacity: 1;
 }
 
 /* ============================================
