@@ -296,16 +296,23 @@ new Chart(eventoCtx, {
 {% if giornaliere_stats|length > 0 %}
 const giornaliereCtx = document.getElementById('giornaliereChart').getContext('2d');
 
+// Dati grezzi dal backend
+const rawDates = [{% for stat in giornaliere_stats %}'{{ stat[0] }}'{% if not loop.last %},{% endif %}{% endfor %}];
+const rawData = [{% for stat in giornaliere_stats %}{{ stat[1] }}{% if not loop.last %},{% endif %}{% endfor %}];
+
+// Formatta le date in formato DD/MM
+const formattedLabels = rawDates.map(dateStr => {
+    const [anno, mese, giorno] = dateStr.split('-');
+    return `${giorno}/${mese}`;
+});
+
 new Chart(giornaliereCtx, {
     type: 'line',
     data: {
-        labels: [{% for stat in giornaliere_stats %}
-            {% set date_parts = stat[0].split('-') %}
-            '{{ date_parts[2] }}/{{ date_parts[1] }}'{% if not loop.last %},{% endif %}
-        {% endfor %}],
+        labels: formattedLabels,
         datasets: [{
             label: 'Numero di Persone',
-            data: [{% for stat in giornaliere_stats %}{{ stat[1] }}{% if not loop.last %},{% endif %}{% endfor %}],
+            data: rawData,
             borderColor: '#FFD700',
             backgroundColor: 'rgba(255, 215, 0, 0.15)',
             borderWidth: 3,
@@ -352,7 +359,7 @@ new Chart(giornaliereCtx, {
                 callbacks: {
                     title: function(context) {
                         const dataIndex = context[0].dataIndex;
-                        const fullDate = [{% for stat in giornaliere_stats %}'{{ stat[0] }}'{% if not loop.last %},{% endif %}{% endfor %}][dataIndex];
+                        const fullDate = rawDates[dataIndex];
                         const [anno, mese, giorno] = fullDate.split('-');
                         const mesi = ['Gennaio', 'Febbraio', 'Marzo', 'Aprile', 'Maggio', 'Giugno', 
                                      'Luglio', 'Agosto', 'Settembre', 'Ottobre', 'Novembre', 'Dicembre'];
