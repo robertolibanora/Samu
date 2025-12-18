@@ -733,12 +733,28 @@ def delete_registrazione():
             conn.close()
 
 # ---------------------------
-# ROUTE: PWA - MANIFEST
+# ROUTE: PWA - MANIFEST (per retrocompatibilità)
 # ---------------------------
 @app.route("/manifest.json")
 def manifest():
-    """Serve il manifest.json per PWA"""
-    return send_from_directory('static', 'manifest.json', mimetype='application/manifest+json')
+    """Serve il manifest.json per PWA (retrocompatibilità - default registrazione)"""
+    return send_from_directory('static', 'manifest-register.json', mimetype='application/manifest+json')
+
+# ---------------------------
+# ROUTE: PWA - MANIFEST REGISTRAZIONE
+# ---------------------------
+@app.route("/manifest-register.json")
+def manifest_register():
+    """Serve il manifest per la PWA di registrazione"""
+    return send_from_directory('static', 'manifest-register.json', mimetype='application/manifest+json')
+
+# ---------------------------
+# ROUTE: PWA - MANIFEST ADMIN
+# ---------------------------
+@app.route("/manifest-admin.json")
+def manifest_admin():
+    """Serve il manifest per la PWA admin"""
+    return send_from_directory('static', 'manifest-admin.json', mimetype='application/manifest+json')
 
 # ---------------------------
 # ROUTE: PWA - SERVICE WORKER
