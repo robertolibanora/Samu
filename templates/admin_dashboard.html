@@ -7,21 +7,35 @@
     <meta name="apple-mobile-web-app-capable" content="yes">
     <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
     <meta name="apple-mobile-web-app-title" content="SAMU Admin">
+    <meta name="mobile-web-app-capable" content="yes">
+    <meta name="application-name" content="SAMU">
     <link rel="manifest" href="/manifest.json">
-    <link rel="apple-touch-icon" href="/static/icon.png">
+    <link rel="apple-touch-icon" href="/static/icons/icon-152x152.png">
+    <link rel="apple-touch-icon" sizes="72x72" href="/static/icons/icon-72x72.png">
+    <link rel="apple-touch-icon" sizes="96x96" href="/static/icons/icon-96x96.png">
+    <link rel="apple-touch-icon" sizes="128x128" href="/static/icons/icon-128x128.png">
+    <link rel="apple-touch-icon" sizes="144x144" href="/static/icons/icon-144x144.png">
+    <link rel="apple-touch-icon" sizes="152x152" href="/static/icons/icon-152x152.png">
+    <link rel="apple-touch-icon" sizes="192x192" href="/static/icons/icon-192x192.png">
+    <link rel="apple-touch-icon" sizes="384x384" href="/static/icons/icon-384x384.png">
+    <link rel="apple-touch-icon" sizes="512x512" href="/static/icons/icon-512x512.png">
+    <link rel="icon" type="image/png" sizes="192x192" href="/static/icons/icon-192x192.png">
+    <link rel="icon" type="image/png" sizes="512x512" href="/static/icons/icon-512x512.png">
     <title>Dashboard - Admin</title>
     <link rel="stylesheet" href="/static/style.css">
     <link rel="stylesheet" href="/static/admin.css">
     <link rel="stylesheet" href="/static/ux-enhancements.css">
+    <link rel="stylesheet" href="/static/pwa-enhancements.css">
+    <script src="/static/pwa-init.js" defer></script>
 </head>
 <body>
 <div class="overlay">
     <div class="app-content">
-    <h2>📊 Dashboard</h2>
+    <h2>Dashboard</h2>
 
     {% if user_name %}
     <div class="user-badge">
-        <span>👤</span>
+        <span></span>
         <span>{{ user_name }}</span>
     </div>
     {% endif %}
@@ -30,7 +44,7 @@
     {% if prossimo_evento %}
     <div class="prossimo-evento-card">
         <div class="card-header">
-            <h3>📅 Prossimo Evento</h3>
+            <h3>Prossimo Evento</h3>
             <span class="badge-active">Attivo</span>
         </div>
         <div class="evento-nome-large">{{ prossimo_evento[1] }}</div>
@@ -39,15 +53,15 @@
         {% endif %}
         <div class="evento-info-grid">
             <div class="info-item">
-                <span class="info-label">📅 Data</span>
-                <span class="info-value">{{ prossimo_evento[4] }}</span>
+                <span class="info-label">Data</span>
+                <span class="info-value">{% if prossimo_evento[4] %}{{ prossimo_evento[4] }}{% else %}Non specificata{% endif %}</span>
             </div>
             <div class="info-item">
-                <span class="info-label">💰 Prezzo</span>
+                <span class="info-label">Prezzo</span>
                 <span class="info-value">€{{ "%.2f"|format(prossimo_evento[3]) }}</span>
             </div>
             <div class="info-item">
-                <span class="info-label">👥 Registrati</span>
+                <span class="info-label">Registrati</span>
                 <span class="info-value-large">{{ prossimo_evento[6] }}</span>
             </div>
         </div>
@@ -55,13 +69,63 @@
             Vedi Dettagli →
         </a>
     </div>
+
+    <!-- Lista Registrati Evento Attivo -->
+    {% if prossimo_evento and registrati_evento_attivo|length > 0 %}
+    <div class="search-section" style="margin-top: 25px;">
+        <h3>Registrati per Evento Attivo</h3>
+        
+        <div class="list-view" id="registrati-list">
+            {% for r in registrati_evento_attivo %}
+            <div class="list-item" 
+                 data-id="{{ r[0] }}"
+                 data-nome="{{ r[1]|lower }}" 
+                 data-cognome="{{ r[2]|lower }}" 
+                 data-telefono="{{ r[3] }}"
+                 data-nome-completo="{{ r[1] }} {{ r[2] }}">
+                <div class="list-item-header">
+                    <div class="list-item-name">{{ r[1] }} {{ r[2] }}</div>
+                </div>
+                <div class="list-item-details">
+                    <div class="list-item-detail">
+                        <span class="list-item-detail-label">Telefono</span>
+                        <span class="list-item-detail-value">{{ r[3] }}</span>
+                    </div>
+                    <div class="list-item-detail">
+                        <span class="list-item-detail-label">Fascia d'età</span>
+                        <span class="list-item-detail-value">{{ r[4] }}</span>
+                    </div>
+                    <div class="list-item-detail">
+                        <span class="list-item-detail-label">Orario arrivo</span>
+                        <span class="list-item-detail-value">{{ r[5] }}</span>
+                    </div>
+                    <div class="list-item-detail">
+                        <span class="list-item-detail-label">Registrato il</span>
+                        <span class="list-item-detail-value">{{ r[6] }}</span>
+                    </div>
+                </div>
+                <div class="list-item-actions">
+                    <button class="btn-delete" onclick="deleteRegistrazioneFromItem(this)">
+                        Elimina
+                    </button>
+                </div>
+            </div>
+            {% endfor %}
+        </div>
+    </div>
+    {% elif prossimo_evento and registrati_evento_attivo|length == 0 %}
+    <div class="no-results" style="margin-top: 25px;">
+        <div style="font-size: 48px; margin-bottom: 10px;"></div>
+        Nessun registrato per questo evento
+    </div>
+    {% endif %}
     {% else %}
     <div class="no-event-card">
-        <div class="no-event-icon">📭</div>
+        <div class="no-event-icon"></div>
         <h3>Nessun evento attivo</h3>
         <p>Crea un nuovo evento per iniziare</p>
         <a href="/admin/evento/crea" class="btn-crea-evento-link">
-            ➕ Crea Evento
+            Crea Evento
         </a>
     </div>
     {% endif %}
@@ -69,12 +133,12 @@
     <!-- Statistiche Rapide -->
     <div class="stats-grid">
         <div class="stat-card">
-            <div class="stat-icon">📅</div>
+            <div class="stat-icon"></div>
             <div class="stat-value">{{ totale_eventi }}</div>
             <div class="stat-label">Eventi Totali</div>
         </div>
         <div class="stat-card">
-            <div class="stat-icon">👥</div>
+            <div class="stat-icon"></div>
             <div class="stat-value">{{ totale_registrazioni }}</div>
             <div class="stat-label">Registrazioni</div>
         </div>
@@ -95,8 +159,8 @@
                 {% endif %}
             </div>
             <div class="preview-details">
-                <span>📅 {{ evento[2] }}</span>
-                <span>👥 {{ evento[4] }}</span>
+                <span>{{ evento[2] }}</span>
+                <span>{{ evento[4] }} registrati</span>
             </div>
         </div>
         {% endfor %}
@@ -108,22 +172,109 @@
 <!-- Bottom Navigation Bar -->
 <div class="bottom-nav">
     <a href="/admin/dashboard" class="nav-item active">
-        <span class="nav-icon">🏠</span>
+        <span class="nav-icon"></span>
         <span class="nav-label">Dashboard</span>
     </a>
     <a href="/admin/statistiche" class="nav-item">
-        <span class="nav-icon">📊</span>
+        <span class="nav-icon"></span>
         <span class="nav-label">Statistiche</span>
     </a>
     <a href="/admin/evento/crea" class="nav-item">
-        <span class="nav-icon">➕</span>
+        <span class="nav-icon"></span>
         <span class="nav-label">Nuovo</span>
     </a>
     <a href="/admin/eventi" class="nav-item">
-        <span class="nav-icon">📅</span>
+        <span class="nav-icon"></span>
         <span class="nav-label">Eventi</span>
     </a>
 </div>
+
+<!-- Toast Container -->
+<div id="toast-container"></div>
+
+<script>
+// Toast Notification System
+function showToast(message, type = 'info') {
+    const toast = document.createElement('div');
+    toast.className = `toast ${type}`;
+    toast.textContent = message;
+    
+    const container = document.getElementById('toast-container');
+    if (!container) {
+        const newContainer = document.createElement('div');
+        newContainer.id = 'toast-container';
+        document.body.appendChild(newContainer);
+    }
+    
+    document.getElementById('toast-container').appendChild(toast);
+    
+    setTimeout(() => {
+        toast.style.animation = 'toastSlideIn 0.3s ease reverse';
+        setTimeout(() => toast.remove(), 300);
+    }, 3000);
+}
+
+// Elimina registrazione
+async function deleteRegistrazioneFromItem(button) {
+    const item = button.closest('.list-item');
+    const personaId = parseInt(item.getAttribute('data-id'));
+    const nomeCompleto = item.getAttribute('data-nome-completo');
+    
+    if (!confirm(`Sei sicuro di voler eliminare la registrazione di "${nomeCompleto}"?\n\nQuesta azione non può essere annullata!`)) {
+        return;
+    }
+    
+    // Haptic feedback
+    if ('vibrate' in navigator) {
+        navigator.vibrate([20, 50, 20]);
+    }
+    
+    if (item) {
+        item.style.opacity = '0.5';
+        item.style.pointerEvents = 'none';
+        item.style.transition = 'all 0.3s ease';
+    }
+    
+    try {
+        const response = await fetch('/admin/delete', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify({ persona_id: personaId })
+        });
+        
+        const data = await response.json();
+        
+        if (data.ok) {
+            showToast(`${data.message}`, 'success');
+            if (item) {
+                item.style.transition = 'all 0.3s ease';
+                item.style.transform = 'translateX(-100%)';
+                item.style.opacity = '0';
+                setTimeout(() => {
+                    item.remove();
+                    setTimeout(() => window.location.reload(), 1000);
+                }, 300);
+            } else {
+                setTimeout(() => window.location.reload(), 1000);
+            }
+        } else {
+            showToast(`Errore: ${data.error || 'Impossibile eliminare la registrazione'}`, 'error');
+            if (item) {
+                item.style.opacity = '1';
+                item.style.pointerEvents = 'auto';
+            }
+        }
+    } catch (error) {
+        showToast('Errore di connessione', 'error');
+        if (item) {
+            item.style.opacity = '1';
+            item.style.pointerEvents = 'auto';
+        }
+    }
+}
+</script>
 </body>
 </html>
 

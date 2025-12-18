@@ -1,0 +1,84 @@
+<!--
+SNIPPET PWA HEAD - Da aggiungere nei template HTML
+====================================================
+
+Sostituisci la sezione <head> esistente con questa versione completa PWA.
+
+IMPORTANTE: 
+- Assicurati di avere le icone in /static/icons/ (vedi istruzioni sotto)
+- Il service worker verrà registrato automaticamente da pwa-init.js
+-->
+
+<head>
+    <meta charset="UTF-8">
+    
+    <!-- Viewport ottimizzato per mobile app -->
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
+    
+    <!-- Theme color per browser chrome -->
+    <meta name="theme-color" content="#FFD700">
+    
+    <!-- PWA Meta Tags iOS Safari -->
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+    <meta name="apple-mobile-web-app-title" content="SAMU">
+    
+    <!-- PWA Meta Tags Android -->
+    <meta name="mobile-web-app-capable" content="yes">
+    <meta name="application-name" content="SAMU">
+    
+    <!-- Manifest PWA -->
+    <link rel="manifest" href="/manifest.json">
+    
+    <!-- Apple Touch Icons (iOS) -->
+    <link rel="apple-touch-icon" href="/static/icons/icon-152x152.png">
+    <link rel="apple-touch-icon" sizes="72x72" href="/static/icons/icon-72x72.png">
+    <link rel="apple-touch-icon" sizes="96x96" href="/static/icons/icon-96x96.png">
+    <link rel="apple-touch-icon" sizes="128x128" href="/static/icons/icon-128x128.png">
+    <link rel="apple-touch-icon" sizes="144x144" href="/static/icons/icon-144x144.png">
+    <link rel="apple-touch-icon" sizes="152x152" href="/static/icons/icon-152x152.png">
+    <link rel="apple-touch-icon" sizes="192x192" href="/static/icons/icon-192x192.png">
+    <link rel="apple-touch-icon" sizes="384x384" href="/static/icons/icon-384x384.png">
+    <link rel="apple-touch-icon" sizes="512x512" href="/static/icons/icon-512x512.png">
+    
+    <!-- Splash Screen iOS (opzionale, usa icona principale) -->
+    <link rel="apple-touch-startup-image" href="/static/icons/icon-512x512.png">
+    
+    <!-- Favicon standard -->
+    <link rel="icon" type="image/png" sizes="192x192" href="/static/icons/icon-192x192.png">
+    <link rel="icon" type="image/png" sizes="512x512" href="/static/icons/icon-512x512.png">
+    
+    <!-- CSS -->
+    <link rel="stylesheet" href="/static/style.css">
+    <link rel="stylesheet" href="/static/admin.css">
+    <link rel="stylesheet" href="/static/ux-enhancements.css">
+    <link rel="stylesheet" href="/static/pwa-enhancements.css">
+    
+    <!-- PWA Initialization Script -->
+    <script src="/static/pwa-init.js" defer></script>
+    
+    <!-- Titolo pagina (modifica per ogni template) -->
+    <title>Registrazione SAMU</title>
+</head>
+
+<!--
+ISTRUZIONI PER LE ICONE:
+========================
+
+1. Crea la cartella: /static/icons/
+2. Genera icone PNG nelle seguenti dimensioni:
+   - 72x72, 96x96, 128x128, 144x144, 152x152, 192x192, 384x384, 512x512
+
+3. Strumenti consigliati per generare icone:
+   - https://realfavicongenerator.net/
+   - https://www.pwabuilder.com/imageGenerator
+   - https://favicon.io/
+
+4. Le icone devono essere:
+   - PNG con trasparenza
+   - Design semplice e riconoscibile anche a piccole dimensioni
+   - Colore principale: #FFD700 (oro) su sfondo scuro o trasparente
+
+5. Per iOS, l'icona viene automaticamente arrotondata, quindi evita bordi troppo vicini ai margini.
+-->
+

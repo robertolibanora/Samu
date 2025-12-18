@@ -86,32 +86,32 @@
 <div class="overlay">
     <div class="app-content">
     <div class="login-header">
-        <div class="login-icon">🔐</div>
+        <div class="login-icon"></div>
         <h2>Accesso Admin</h2>
         <p style="opacity: 0.7; font-size: 14px;">Sistema di gestione eventi SAMU</p>
     </div>
 
     <form method="POST" class="login-form">
         <div class="input-group">
-            <span class="input-icon">👤</span>
+            <span class="input-icon"></span>
             <label>Username:</label>
             <input type="text" name="username" required autofocus class="input-with-icon" placeholder="Inserisci username">
         </div>
         
         <div class="input-group">
-            <span class="input-icon">🔒</span>
+            <span class="input-icon"></span>
             <label>Password:</label>
             <input type="password" name="password" required class="input-with-icon" id="password-input" placeholder="Inserisci password">
-            <button type="button" class="password-toggle" onclick="togglePassword()">👁️</button>
+            <button type="button" class="password-toggle" onclick="togglePassword()"></button>
         </div>
         
         {% if error %}
         <div class="error-message-box" style="animation: shake 0.5s ease;">
-            <strong>⚠️ Errore:</strong> {{ error }}
+            <strong>Errore:</strong> {{ error }}
         </div>
         {% endif %}
 
-        <button type="submit">🚀 Accedi</button>
+        <button type="submit">Accedi</button>
     </form>
 </div>
 
@@ -121,10 +121,10 @@ function togglePassword() {
     const button = event.target;
     if (input.type === 'password') {
         input.type = 'text';
-        button.textContent = '🙈';
+        button.textContent = '';
     } else {
         input.type = 'password';
-        button.textContent = '👁️';
+        button.textContent = '';
     }
 }
 

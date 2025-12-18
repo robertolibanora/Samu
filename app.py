@@ -1,4 +1,4 @@
-from flask import Flask, render_template, request, redirect, session, url_for, jsonify
+from flask import Flask, render_template, request, redirect, session, url_for, jsonify, send_from_directory
 import sqlite3
 import os
 from datetime import datetime, timedelta
@@ -92,7 +92,7 @@ USERS = {
     }
 }
 
-print("🔐 Utenti configurati:")
+print("Utenti configurati:")
 for username, user_data in USERS.items():
     print(f"   - {username} ({user_data['role']})")
 
@@ -171,6 +171,23 @@ def init_db():
         if 'evento_id' not in columns:
             c.execute("ALTER TABLE registrazioni ADD COLUMN evento_id INTEGER DEFAULT 1")
             conn.commit()
+        
+        # Migrazione: normalizza tutti i telefoni esistenti (rimuovi spazi, trattini, etc.)
+        # per evitare problemi con il controllo duplicati
+        try:
+            c.execute("SELECT id, telefono FROM registrazioni")
+            registrazioni = c.fetchall()
+            for reg_id, telefono in registrazioni:
+                if telefono:
+                    # Normalizza il telefono (rimuovi caratteri non numerici)
+                    telefono_normalizzato = ''.join(filter(str.isdigit, telefono))
+                    if telefono_normalizzato != telefono:
+                        c.execute("UPDATE registrazioni SET telefono = ? WHERE id = ?", 
+                                (telefono_normalizzato, reg_id))
+            conn.commit()
+        except Exception as e:
+            print(f"Errore durante normalizzazione telefoni: {e}")
+            pass
     except sqlite3.OperationalError as e:
         print(f"Errore migrazione: {e}")
         pass
@@ -253,16 +270,13 @@ def register():
                                      error="Evento non valido o non più disponibile.")
             
             # Controlla se il telefono è già registrato per questo evento
-            # Normalizza il telefono per il controllo (rimuovi spazi, trattini, etc.)
-            # Confronta sia il telefono normalizzato che quello originale
+            # Normalizza il telefono nel database per il confronto (rimuovi spazi, trattini, etc.)
+            # Confronta solo telefoni normalizzati per evitare falsi positivi
             c.execute("""
                 SELECT COUNT(*) FROM registrazioni 
-                WHERE (
-                    telefono = ? OR 
-                    REPLACE(REPLACE(REPLACE(REPLACE(REPLACE(telefono, ' ', ''), '-', ''), '.', ''), '(', ''), ')', '') = ?
-                )
+                WHERE REPLACE(REPLACE(REPLACE(REPLACE(REPLACE(telefono, ' ', ''), '-', ''), '.', ''), '(', ''), ')', '') = ?
                 AND evento_id = ?
-            """, (telefono_pulito, telefono_pulito, evento_id))
+            """, (telefono_pulito, evento_id))
             count = c.fetchone()[0]
             if count > 0:
                 return render_template("register.html", evento=evento_attivo,
@@ -391,12 +405,24 @@ def admin_dashboard():
         """)
         ultimi_eventi = c.fetchall()
         
+        # Registrati per l'evento attivo (se esiste)
+        registrati_evento_attivo = []
+        if prossimo_evento:
+            c.execute("""
+                SELECT id, nome, cognome, telefono, eta_fascia, orario_arrivo, created_at
+                FROM registrazioni
+                WHERE evento_id = ?
+                ORDER BY created_at DESC
+            """, (prossimo_evento[0],))
+            registrati_evento_attivo = c.fetchall()
+        
     except Exception as e:
         print(f"Errore durante il caricamento dashboard: {e}")
         prossimo_evento = None
         totale_eventi = 0
         totale_registrazioni = 0
         ultimi_eventi = []
+        registrati_evento_attivo = []
     finally:
         if conn:
             conn.close()
@@ -408,6 +434,7 @@ def admin_dashboard():
                          totale_eventi=totale_eventi,
                          totale_registrazioni=totale_registrazioni,
                          ultimi_eventi=ultimi_eventi,
+                         registrati_evento_attivo=registrati_evento_attivo,
                          user_name=user_name)
 
 # ---------------------------
@@ -702,6 +729,30 @@ def delete_registrazione():
     finally:
         if conn:
             conn.close()
+
+# ---------------------------
+# ROUTE: PWA - MANIFEST
+# ---------------------------
+@app.route("/manifest.json")
+def manifest():
+    """Serve il manifest.json per PWA"""
+    return send_from_directory('static', 'manifest.json', mimetype='application/manifest+json')
+
+# ---------------------------
+# ROUTE: PWA - SERVICE WORKER
+# ---------------------------
+@app.route("/service-worker.js")
+def service_worker():
+    """Serve il service worker con content-type corretto"""
+    return send_from_directory('static', 'service-worker.js', mimetype='application/javascript')
+
+# ---------------------------
+# ROUTE: PWA - OFFLINE PAGE
+# ---------------------------
+@app.route("/offline.html")
+def offline_page():
+    """Serve la pagina offline"""
+    return render_template("offline.html")
 
 if __name__ == "__main__":
     port = int(os.environ.get("PORT", 5002))

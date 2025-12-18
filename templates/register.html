@@ -7,11 +7,25 @@
     <meta name="apple-mobile-web-app-capable" content="yes">
     <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
     <meta name="apple-mobile-web-app-title" content="SAMU">
+    <meta name="mobile-web-app-capable" content="yes">
+    <meta name="application-name" content="SAMU">
     <link rel="manifest" href="/manifest.json">
-    <link rel="apple-touch-icon" href="/static/icon.png">
+    <link rel="apple-touch-icon" href="/static/icons/icon-152x152.png">
+    <link rel="apple-touch-icon" sizes="72x72" href="/static/icons/icon-72x72.png">
+    <link rel="apple-touch-icon" sizes="96x96" href="/static/icons/icon-96x96.png">
+    <link rel="apple-touch-icon" sizes="128x128" href="/static/icons/icon-128x128.png">
+    <link rel="apple-touch-icon" sizes="144x144" href="/static/icons/icon-144x144.png">
+    <link rel="apple-touch-icon" sizes="152x152" href="/static/icons/icon-152x152.png">
+    <link rel="apple-touch-icon" sizes="192x192" href="/static/icons/icon-192x192.png">
+    <link rel="apple-touch-icon" sizes="384x384" href="/static/icons/icon-384x384.png">
+    <link rel="apple-touch-icon" sizes="512x512" href="/static/icons/icon-512x512.png">
+    <link rel="icon" type="image/png" sizes="192x192" href="/static/icons/icon-192x192.png">
+    <link rel="icon" type="image/png" sizes="512x512" href="/static/icons/icon-512x512.png">
     <title>Registrazione SAMU</title>
     <link rel="stylesheet" href="/static/style.css">
     <link rel="stylesheet" href="/static/ux-enhancements.css">
+    <link rel="stylesheet" href="/static/pwa-enhancements.css">
+    <script src="/static/pwa-init.js" defer></script>
     <style>
         .evento-info {
             background: rgba(255,255,255,0.08);
@@ -83,11 +97,11 @@
         }
         
         .input-feedback.valid {
-            color: #00ff00;
+            color: #FFD700;
         }
         
         .input-feedback.invalid {
-            color: #ff4444;
+            color: #FFD700;
         }
         
         .eta-fascia-group {
@@ -150,20 +164,20 @@
 
     {% if error %}
     <div class="error-message-box" style="animation: shake 0.5s ease;">
-        <strong>⚠️ Errore:</strong> {{ error }}
+        <strong>Errore:</strong> {{ error }}
     </div>
     {% endif %}
 
     {% if not evento %}
     <div class="error-message-box">
-        <strong>ℹ️ Nessun evento disponibile</strong><br>
+        <strong>Nessun evento disponibile</strong><br>
         Contatta l'amministratore per maggiori informazioni.
     </div>
     {% else %}
 
     {% if success %}
     <div class="success-animation">
-        <div class="success-icon">✅</div>
+        <div class="success-icon"></div>
         <div class="success-message-box" style="margin: 0;">
             <strong>Registrazione completata!</strong><br>
             {{ success }}
@@ -188,21 +202,21 @@
 
     <form method="POST" id="registrationForm">
         <div class="input-group">
-            <span class="input-icon">👤</span>
+            <span class="input-icon"></span>
             <label>Nome: <span style="color: #FFD700;">*</span></label>
             <input type="text" name="nome" required class="input-with-icon" placeholder="Il tuo nome" autocomplete="given-name" id="nome-input">
             <div class="input-feedback" id="nome-feedback"></div>
         </div>
 
         <div class="input-group">
-            <span class="input-icon">👤</span>
+            <span class="input-icon"></span>
             <label>Cognome: <span style="color: #FFD700;">*</span></label>
             <input type="text" name="cognome" required class="input-with-icon" placeholder="Il tuo cognome" autocomplete="family-name" id="cognome-input">
             <div class="input-feedback" id="cognome-feedback"></div>
         </div>
 
         <div class="input-group">
-            <span class="input-icon">📱</span>
+            <span class="input-icon"></span>
             <label>Telefono: <span style="color: #FFD700;">*</span></label>
             <input type="tel" name="telefono" required class="input-with-icon" placeholder="3XX XXX XXXX" pattern="3[0-9]{8,14}" autocomplete="tel" id="telefono-input">
             <div class="input-feedback" id="telefono-feedback">Il numero deve iniziare con 3</div>
@@ -232,18 +246,23 @@
         </div>
 
         <div class="input-group">
-            <span class="input-icon">🕐</span>
+            <span class="input-icon"></span>
             <label>Orario di arrivo: <span style="color: #FFD700;">*</span></label>
             <input type="time" name="orario_arrivo" required class="input-with-icon" id="orario-input">
             <div class="input-feedback" id="orario-feedback"></div>
         </div>
 
-        <button type="submit">✓ Completa Registrazione</button>
+        <button type="submit">Completa Registrazione</button>
     </form>
 
     {% endif %}
     {% endif %}
     </div>
+    
+    <!-- Footer -->
+    <footer class="app-footer">
+        <p>Creato da <span class="footer-name">Roberto Libanora</span></p>
+    </footer>
 </div>
 
 <!-- Toast Container -->
@@ -274,7 +293,7 @@ function selectEtaFascia(value) {
     
     // Feedback
     const feedback = document.getElementById('eta-feedback');
-    feedback.textContent = '✓ Fascia selezionata';
+    feedback.textContent = 'Fascia selezionata';
     feedback.className = 'input-feedback show valid';
 }
 
@@ -302,7 +321,7 @@ document.addEventListener('DOMContentLoaded', function() {
         if (isValid) {
             inputGroup.classList.remove('error');
             inputGroup.classList.add('success');
-            feedback.textContent = '✓ Valido';
+            feedback.textContent = 'Valido';
             feedback.className = 'input-feedback show valid';
             hapticFeedback('light');
         } else {
@@ -350,7 +369,7 @@ document.addEventListener('DOMContentLoaded', function() {
             if (value.startsWith('3') && value.length >= 9 && value.length <= 15) {
                 inputGroup?.classList.remove('error');
                 inputGroup?.classList.add('success');
-                feedback.textContent = '✓ Numero valido';
+                feedback.textContent = 'Numero valido';
                 feedback.className = 'input-feedback show valid';
                 hapticFeedback('light');
             } else {
@@ -375,7 +394,7 @@ document.addEventListener('DOMContentLoaded', function() {
             if (this.value) {
                 inputGroup?.classList.remove('error');
                 inputGroup?.classList.add('success');
-                feedback.textContent = '✓ Orario selezionato';
+                feedback.textContent = 'Orario selezionato';
                 feedback.className = 'input-feedback show valid';
                 hapticFeedback('light');
             }

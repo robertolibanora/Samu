@@ -79,11 +79,11 @@
 <body>
 <div class="overlay">
     <div class="app-content">
-    <h2>📅 Eventi</h2>
+    <h2>Eventi</h2>
 
     {% if user_name %}
     <div class="user-badge">
-        <span>👤</span>
+        <span></span>
         <span>{{ user_name }}</span>
     </div>
     {% endif %}
@@ -96,7 +96,7 @@
             <div class="evento-card-header-full">
                 <div class="evento-card-nome-full">{{ evento[1] }}</div>
                 <div class="badge-small {% if evento[6] == 1 %}active{% endif %}">
-                    {% if evento[6] == 1 %}✓ Attivo{% else %}Passato{% endif %}
+                    {% if evento[6] == 1 %}Attivo{% else %}Passato{% endif %}
                 </div>
             </div>
             {% if evento[2] %}
@@ -104,19 +104,16 @@
             {% endif %}
             <div class="evento-card-meta">
                 <div class="meta-item">
-                    <span>📅</span>
                     <span>{{ evento[4] }}</span>
                 </div>
                 <div class="meta-item">
-                    <span>💰</span>
                     <span>€{{ "%.2f"|format(evento[3]) }}</span>
                 </div>
                 <div class="meta-item">
-                    <span>👥</span>
                     <span><strong>{{ evento[7] }}</strong> registrati</span>
                 </div>
                 <div class="meta-item">
-                    <span>🕐</span>
+                    <span>
                     <span>Creato: {{ evento[5][:10] }}</span>
                 </div>
             </div>
@@ -124,7 +121,7 @@
         {% endfor %}
         {% else %}
         <div class="no-results">
-            <div style="font-size: 48px; margin-bottom: 10px;">📭</div>
+            <div style="font-size: 48px; margin-bottom: 10px;"></div>
             Nessun evento creato
         </div>
         {% endif %}
@@ -135,19 +132,19 @@
 <!-- Bottom Navigation Bar -->
 <div class="bottom-nav">
     <a href="/admin/dashboard" class="nav-item">
-        <span class="nav-icon">🏠</span>
+        <span class="nav-icon"></span>
         <span class="nav-label">Dashboard</span>
     </a>
     <a href="/admin/statistiche" class="nav-item">
-        <span class="nav-icon">📊</span>
+        <span class="nav-icon"></span>
         <span class="nav-label">Statistiche</span>
     </a>
     <a href="/admin/evento/crea" class="nav-item">
-        <span class="nav-icon">➕</span>
+        <span class="nav-icon"></span>
         <span class="nav-label">Nuovo</span>
     </a>
     <a href="/admin/eventi" class="nav-item active">
-        <span class="nav-icon">📅</span>
+        <span class="nav-icon"></span>
         <span class="nav-label">Eventi</span>
     </a>
 </div>
@@ -165,10 +162,10 @@ function showToast(message, type = 'info', duration = 3000) {
     toast.className = `toast ${type}`;
     
     const icons = {
-        success: '✅',
-        error: '❌',
-        info: 'ℹ️',
-        warning: '⚠️'
+        success: '',
+        error: '',
+        info: '',
+        warning: ''
     };
     
     toast.innerHTML = `

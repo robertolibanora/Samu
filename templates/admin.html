@@ -413,12 +413,12 @@
 <body>
 <div class="overlay">
     <div class="app-content">
-    <h2>📊 Dashboard Admin</h2>
+    <h2>Dashboard Admin</h2>
 
     {% if user_name %}
     <div style="text-align: center; margin-bottom: 20px; padding: 12px; background: rgba(255, 255, 255, 0.05); border-radius: 8px; font-size: 14px;">
         <div class="user-badge">
-            <span>👤</span>
+            <span></span>
             <span>Accesso come: <strong>{{ user_name }}</strong></span>
         </div>
     </div>
@@ -426,13 +426,12 @@
 
     <!-- Pulsante Crea Evento -->
     <a href="/admin/evento/crea" style="text-decoration: none;">
-        <button class="btn-crea-evento">➕ Crea Nuovo Evento</button>
+        <button class="btn-crea-evento">Crea Nuovo Evento</button>
     </a>
 
     <!-- Sezione Eventi (Storico) -->
     <div class="eventi-section">
         <h3 style="margin-top: 0; display: flex; align-items: center; gap: 10px;">
-            <span>📅</span>
             <span>Storico Eventi</span>
         </h3>
         {% if eventi and eventi|length > 0 %}
@@ -442,24 +441,24 @@
             <div class="evento-header">
                 <div class="evento-nome">{{ evento[1] }}</div>
                 <div class="evento-badge {% if evento[5] == 0 %}inactive{% endif %}">
-                    {% if evento[5] == 1 %}✓ Attivo{% else %}✗ Chiuso{% endif %}
+                    {% if evento[5] == 1 %}Attivo{% else %}Chiuso{% endif %}
                 </div>
             </div>
             <div class="evento-details">
                 {% if evento[2] %}<div style="margin-bottom: 5px;">{{ evento[2] }}</div>{% endif %}
                 <div style="display: flex; justify-content: space-between; font-size: 12px; opacity: 0.7; margin-top: 8px;">
-                    <span>💰 Prezzo: €{{ "%.2f"|format(evento[3]) }}</span>
-                    <span>👥 Registrati: <strong>{{ evento[6] }}</strong></span>
+                    <span>Prezzo: €{{ "%.2f"|format(evento[3]) }}</span>
+                    <span>Registrati: <strong>{{ evento[6] }}</strong></span>
                 </div>
                 <div style="font-size: 11px; opacity: 0.6; margin-top: 5px;">
-                    📆 Creato: {{ evento[4] }}
+                    Creato: {{ evento[4] }}
                 </div>
             </div>
         </div>
         {% endfor %}
         {% else %}
         <div class="no-results">
-            <div style="font-size: 48px; margin-bottom: 10px;">📭</div>
+            <div style="font-size: 48px; margin-bottom: 10px;"></div>
             Nessun evento creato. Crea il primo evento!
         </div>
         {% endif %}
@@ -469,16 +468,15 @@
     {% if evento_corrente %}
     <div class="stats-box">
         <h3 style="margin: 0 0 10px 0; font-size: 14px; opacity: 0.7; text-transform: uppercase; font-weight: 400;">
-            📌 Evento: {{ evento_corrente[1] }}
+            Evento: {{ evento_corrente[1] }}
         </h3>
         <div class="stat-value">{{ totale_iscritti }}</div>
-        <p style="font-size: 12px; opacity: 0.7; margin-top: 5px;">👥 Registrati</p>
+            <p style="font-size: 12px; opacity: 0.7; margin-top: 5px;">Registrati</p>
     </div>
 
     <!-- Lista Registrati con Ricerca -->
     <div class="search-section">
         <h3 style="display: flex; align-items: center; gap: 10px;">
-            <span>📋</span>
             <span>Lista Registrati</span>
         </h3>
         
@@ -486,15 +484,15 @@
             <input type="text" 
                    id="search-input" 
                    class="search-input" 
-                   placeholder="🔍 Cerca per nome, cognome, telefono...">
-            <span class="search-icon">🔍</span>
+                   placeholder="Cerca per nome, cognome, telefono...">
+            <span class="search-icon"></span>
         </div>
         <div class="search-count" id="search-count"></div>
         
         <div class="list-view" id="registrati-list">
             {% if registrati|length == 0 %}
             <div class="no-results">
-                <div style="font-size: 48px; margin-bottom: 10px;">📭</div>
+                <div style="font-size: 48px; margin-bottom: 10px;"></div>
                 Nessun registrato per questo evento
             </div>
             {% else %}
@@ -505,29 +503,29 @@
                  data-cognome="{{ r[2]|lower }}" 
                  data-telefono="{{ r[3] }}">
                 <div class="list-item-header">
-                    <div class="list-item-name">👤 {{ r[1] }} {{ r[2] }}</div>
+                    <div class="list-item-name">{{ r[1] }} {{ r[2] }}</div>
                 </div>
                 <div class="list-item-details">
                     <div class="list-item-detail">
-                        <span class="list-item-detail-label">📱 Telefono</span>
+                        <span class="list-item-detail-label">Telefono</span>
                         <span class="list-item-detail-value">{{ r[3] }}</span>
                     </div>
                     <div class="list-item-detail">
-                        <span class="list-item-detail-label">🎂 Fascia d'età</span>
+                        <span class="list-item-detail-label">Fascia d'età</span>
                         <span class="list-item-detail-value">{{ r[4] }}</span>
                     </div>
                     <div class="list-item-detail">
-                        <span class="list-item-detail-label">🕐 Orario arrivo</span>
+                        <span class="list-item-detail-label">Orario arrivo</span>
                         <span class="list-item-detail-value">{{ r[5] }}</span>
                     </div>
                     <div class="list-item-detail">
-                        <span class="list-item-detail-label">📅 Registrato il</span>
+                        <span class="list-item-detail-label">Registrato il</span>
                         <span class="list-item-detail-value">{{ r[6] }}</span>
                     </div>
                 </div>
                 <div class="list-item-actions">
                     <button class="btn-delete" onclick="deleteRegistrazione({{ r[0] }}, '{{ r[1] }} {{ r[2] }}')">
-                        🗑️ Elimina
+                        Elimina
                     </button>
                 </div>
             </div>
@@ -537,13 +535,13 @@
     </div>
     {% else %}
     <div class="no-results" style="margin-top: 20px;">
-        <div style="font-size: 48px; margin-bottom: 10px;">📭</div>
+        <div style="font-size: 48px; margin-bottom: 10px;"></div>
         Nessun evento attivo. Crea un nuovo evento per iniziare!
     </div>
     {% endif %}
 
     <div class="logout-link">
-        <a href="/admin/logout">🚪 Logout</a>
+        <a href="/admin/logout">Logout</a>
     </div>
 </div>
 
@@ -567,7 +565,7 @@ function showToast(message, type = 'info') {
 
 // Elimina registrazione con feedback migliorato
 async function deleteRegistrazione(personaId, nomeCompleto) {
-    if (!confirm(`⚠️ Sei sicuro di voler eliminare la registrazione di "${nomeCompleto}"?\n\nQuesta azione non può essere annullata!`)) {
+    if (!confirm(`Sei sicuro di voler eliminare la registrazione di "${nomeCompleto}"?\n\nQuesta azione non può essere annullata!`)) {
         return;
     }
     
@@ -589,7 +587,7 @@ async function deleteRegistrazione(personaId, nomeCompleto) {
         const data = await response.json();
         
         if (data.ok) {
-            showToast(`✅ ${data.message}`, 'success');
+            showToast(`${data.message}`, 'success');
             if (item) {
                 item.style.transition = 'all 0.3s ease';
                 item.style.transform = 'translateX(-100%)';
@@ -604,14 +602,14 @@ async function deleteRegistrazione(personaId, nomeCompleto) {
                 setTimeout(() => window.location.reload(), 1000);
             }
         } else {
-            showToast(`❌ Errore: ${data.error || 'Impossibile eliminare la registrazione'}`, 'error');
+            showToast(`Errore: ${data.error || 'Impossibile eliminare la registrazione'}`, 'error');
             if (item) {
                 item.style.opacity = '1';
                 item.style.pointerEvents = 'auto';
             }
         }
     } catch (error) {
-        showToast('❌ Errore di connessione', 'error');
+        showToast('Errore di connessione', 'error');
         if (item) {
             item.style.opacity = '1';
             item.style.pointerEvents = 'auto';
@@ -675,7 +673,7 @@ if (searchInput) {
                 noResults = document.createElement('div');
                 noResults.id = 'no-results-msg';
                 noResults.className = 'no-results';
-                noResults.innerHTML = '<div style="font-size: 48px; margin-bottom: 10px;">🔍</div>Nessun risultato trovato';
+                noResults.innerHTML = '<div style="font-size: 48px; margin-bottom: 10px;"></div>Nessun risultato trovato';
                 document.getElementById('registrati-list').appendChild(noResults);
             }
         } else if (noResults) {

@@ -1,0 +1,294 @@
+/**
+ * PWA Enhancements CSS
+ * Comportamento app-like per mobile
+ * Ottimizzazioni per iOS Safari e Android Chrome
+ */
+
+/* ============================================
+   PREVENZIONE ZOOM E OVERSCROLL
+   ============================================ */
+
+html {
+  /* Previeni zoom involontario su double-tap */
+  touch-action: pan-x pan-y;
+  /* Previeni selezione testo su iOS */
+  -webkit-touch-callout: none;
+  /* Previeni bounce scroll su iOS */
+  overscroll-behavior-y: none;
+  overscroll-behavior-x: none;
+}
+
+body {
+  /* Previeni pull-to-refresh su mobile */
+  overscroll-behavior-y: contain;
+  /* Touch action ottimizzato */
+  touch-action: manipulation;
+  /* Previeni selezione testo */
+  -webkit-user-select: none;
+  user-select: none;
+  /* Smooth scrolling */
+  -webkit-overflow-scrolling: touch;
+}
+
+/* Permetti selezione solo per input e textarea */
+input,
+textarea,
+[contenteditable="true"] {
+  -webkit-user-select: text;
+  user-select: text;
+  touch-action: auto;
+}
+
+/* ============================================
+   TOUCH TARGETS (minimo 44x44px per iOS)
+   ============================================ */
+
+button,
+a,
+input[type="submit"],
+input[type="button"],
+input[type="checkbox"],
+input[type="radio"],
+.selectable,
+.clickable {
+  min-height: 44px;
+  min-width: 44px;
+  /* Touch feedback visibile */
+  -webkit-tap-highlight-color: rgba(255, 215, 0, 0.3);
+  tap-highlight-color: rgba(255, 215, 0, 0.3);
+}
+
+/* ============================================
+   FEEDBACK TAP (stato attivo)
+   ============================================ */
+
+button:active,
+a:active,
+input[type="submit"]:active,
+input[type="button"]:active,
+.btn:active,
+.card:active {
+  opacity: 0.7;
+  transform: scale(0.98);
+  transition: opacity 0.1s, transform 0.1s;
+}
+
+/* Feedback per elementi interattivi */
+.interactive:active {
+  background-color: rgba(255, 255, 255, 0.1);
+  transition: background-color 0.1s;
+}
+
+/* ============================================
+   SAFE AREA (notch support)
+   ============================================ */
+
+/* Padding safe area per contenuti */
+.safe-area-top {
+  padding-top: env(safe-area-inset-top);
+}
+
+.safe-area-bottom {
+  padding-bottom: env(safe-area-inset-bottom);
+}
+
+.safe-area-left {
+  padding-left: env(safe-area-inset-left);
+}
+
+.safe-area-right {
+  padding-right: env(safe-area-inset-right);
+}
+
+/* ============================================
+   SPLASH SCREEN STYLE
+   ============================================ */
+
+/* Stile per splash screen durante caricamento */
+.app-loading {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: #000 url("/static/sfondo.png") center/cover no-repeat;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 9999;
+  transition: opacity 0.3s ease-out;
+}
+
+.app-loading.hidden {
+  opacity: 0;
+  pointer-events: none;
+}
+
+/* ============================================
+   TRANSIZIONI LEGGERE
+   ============================================ */
+
+/* Transizioni smooth per navigazione */
+.page-transition {
+  animation: fadeIn 0.2s ease-in;
+}
+
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+    transform: translateY(10px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+/* Transizione per cambio pagina */
+.app-content {
+  animation: fadeIn 0.2s ease-in;
+}
+
+/* ============================================
+   PREVENZIONE SCROLL HORIZONTALE
+   ============================================ */
+
+* {
+  max-width: 100%;
+}
+
+img,
+video,
+iframe {
+  max-width: 100%;
+  height: auto;
+}
+
+/* ============================================
+   INSTALL PROMPT STYLE (opzionale)
+   ============================================ */
+
+.install-prompt {
+  position: fixed;
+  bottom: 80px;
+  left: 15px;
+  right: 15px;
+  background: rgba(255, 215, 0, 0.95);
+  color: #000;
+  padding: 15px;
+  border-radius: 12px;
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.3);
+  z-index: 1000;
+  animation: slideUp 0.3s ease-out;
+  backdrop-filter: blur(10px);
+  -webkit-backdrop-filter: blur(10px);
+}
+
+@keyframes slideUp {
+  from {
+    transform: translateY(100px);
+    opacity: 0;
+  }
+  to {
+    transform: translateY(0);
+    opacity: 1;
+  }
+}
+
+.install-prompt.hidden {
+  display: none;
+}
+
+/* ============================================
+   OFFLINE INDICATOR
+   ============================================ */
+
+.offline-indicator {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  background: rgba(255, 0, 0, 0.9);
+  color: white;
+  padding: 10px;
+  text-align: center;
+  z-index: 10000;
+  font-size: 14px;
+  animation: slideDown 0.3s ease-out;
+}
+
+@keyframes slideDown {
+  from {
+    transform: translateY(-100%);
+  }
+  to {
+    transform: translateY(0);
+  }
+}
+
+.offline-indicator.hidden {
+  display: none;
+}
+
+/* ============================================
+   PERFORMANCE: GPU ACCELERATION
+   ============================================ */
+
+.app-content,
+.overlay,
+.card,
+button,
+a {
+  /* Abilita GPU acceleration per animazioni fluide */
+  will-change: transform;
+  transform: translateZ(0);
+  -webkit-transform: translateZ(0);
+}
+
+/* ============================================
+   PREVENZIONE FLASH BIANCO (iOS)
+   ============================================ */
+
+html {
+  background-color: #000;
+}
+
+body {
+  background-color: #000;
+}
+
+/* ============================================
+   FONT RENDERING OTTIMIZZATO
+   ============================================ */
+
+body,
+input,
+textarea,
+button {
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  text-rendering: optimizeLegibility;
+}
+
+/* ============================================
+   FOCUS VISIBILE (accessibilità)
+   ============================================ */
+
+button:focus-visible,
+a:focus-visible,
+input:focus-visible {
+  outline: 2px solid #FFD700;
+  outline-offset: 2px;
+}
+
+/* ============================================
+   PREVENZIONE SELECT TEXT SU MOBILE
+   ============================================ */
+
+/* Previeni selezione accidentale durante scroll */
+.no-select {
+  -webkit-user-select: none;
+  user-select: none;
+  -webkit-touch-callout: none;
+}
+

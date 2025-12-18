@@ -84,12 +84,17 @@
             display: flex;
             gap: 10px;
             margin-top: 20px;
+            align-items: stretch;
         }
         
         .btn-secondary {
             flex: 1;
             background: rgba(255,255,255,0.1);
             border: 1px solid rgba(255,255,255,0.3);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            text-align: center;
         }
         
         .btn-secondary:hover {
@@ -100,38 +105,43 @@
 <body>
 <div class="overlay">
     <div class="app-content">
-    <h2>➕ Crea Nuovo Evento</h2>
+    <h2>Crea Nuovo Evento</h2>
 
     {% if error %}
     <div class="error-message-box" style="animation: shake 0.5s ease;">
-        <strong>⚠️ Errore:</strong> {{ error }}
+        <strong>Errore:</strong> {{ error }}
     </div>
     {% endif %}
 
+    <div class="info-message-box" style="margin-bottom: 20px; background: rgba(255, 215, 0, 0.1); border: 1px solid rgba(255, 215, 0, 0.3);">
+        <strong>Info:</strong> Questo evento verrà creato come <strong style="color: #FFD700;">ATTIVO</strong>. 
+        Se esiste già un evento attivo, verrà chiuso automaticamente.
+    </div>
+
     <form method="POST" class="form-container">
         <div class="input-group">
-            <span class="input-icon">📝</span>
+            <span class="input-icon"></span>
             <label>Nome Evento:</label>
             <input type="text" name="nome" required maxlength="200" class="input-with-icon" placeholder="Es: Concerto Rock 2025" id="nome-input">
             <div class="char-count"><span id="nome-count">0</span>/200</div>
         </div>
 
         <div class="input-group">
-            <span class="input-icon">📄</span>
+            <span class="input-icon"></span>
             <label>Descrizione:</label>
             <textarea name="descrizione" rows="4" class="input-with-icon" placeholder="Descrizione opzionale dell'evento..." id="desc-input" maxlength="500"></textarea>
             <div class="char-count"><span id="desc-count">0</span>/500</div>
         </div>
 
         <div class="input-group">
-            <span class="input-icon">📅</span>
+            <span class="input-icon"></span>
             <label>Data Evento: <span style="color: #FFD700;">*</span></label>
             <input type="date" name="data_evento" required class="input-with-icon" id="data-evento-input">
             <div class="input-feedback" id="data-feedback"></div>
         </div>
 
         <div class="input-group">
-            <span class="input-icon">💰</span>
+            <span class="input-icon"></span>
             <label>Prezzo (€):</label>
             <input type="number" name="prezzo" step="0.01" min="0" value="0" placeholder="0.00" class="input-with-icon" id="prezzo-input">
             <div class="char-count" id="prezzo-info">Lascia 0 per evento gratuito</div>
@@ -144,42 +154,40 @@
                 <div style="font-weight: 600; margin-bottom: 8px;" id="preview-nome">-</div>
                 <div style="font-size: 14px; opacity: 0.8; margin-bottom: 8px;" id="preview-desc">-</div>
                 <div class="preview-data">
-                    <div>📅 Data: <span id="preview-data">-</span></div>
+                    <div>Data: <span id="preview-data">-</span></div>
                     <div style="font-size: 18px; font-weight: bold; color: #FFD700; margin-top: 8px;" id="preview-prezzo">€0.00</div>
                 </div>
             </div>
         </div>
 
         <div class="btn-group">
-            <a href="/admin/dashboard" style="text-decoration: none; flex: 1;">
-                <button type="button" class="btn-secondary">← Annulla</button>
+            <a href="/admin/dashboard" style="text-decoration: none; flex: 1; display: flex;">
+                <button type="button" class="btn-secondary" style="width: 100%; margin: 0;">← Annulla</button>
             </a>
-            <button type="submit" style="flex: 2;">✓ Crea Evento</button>
+            <button type="submit" style="flex: 2; margin: 0;">Crea Evento</button>
         </div>
     </form>
+    </div>
 </div>
 
 <!-- Bottom Navigation Bar -->
 <div class="bottom-nav">
     <a href="/admin/dashboard" class="nav-item">
-        <span class="nav-icon">🏠</span>
+        <span class="nav-icon"></span>
         <span class="nav-label">Dashboard</span>
     </a>
     <a href="/admin/statistiche" class="nav-item">
-        <span class="nav-icon">📊</span>
+        <span class="nav-icon"></span>
         <span class="nav-label">Statistiche</span>
     </a>
     <a href="/admin/evento/crea" class="nav-item active">
-        <span class="nav-icon">➕</span>
+        <span class="nav-icon"></span>
         <span class="nav-label">Nuovo</span>
     </a>
     <a href="/admin/eventi" class="nav-item">
-        <span class="nav-icon">📅</span>
+        <span class="nav-icon"></span>
         <span class="nav-label">Eventi</span>
     </a>
-    </div>
-</div>
-    </form>
 </div>
 
 <script>
@@ -240,7 +248,7 @@ if (dataInput) {
     dataInput.addEventListener('change', function() {
         const feedback = document.getElementById('data-feedback');
         if (this.value) {
-            feedback.textContent = '✓ Data selezionata';
+            feedback.textContent = 'Data selezionata';
             feedback.className = 'input-feedback show valid';
         }
         updatePreview();

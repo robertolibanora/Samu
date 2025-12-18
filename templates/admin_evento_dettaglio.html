@@ -58,6 +58,7 @@
         .back-button {
             display: inline-flex;
             align-items: center;
+            justify-content: center;
             gap: 8px;
             padding: 10px 15px;
             background: rgba(255,255,255,0.1);
@@ -66,6 +67,7 @@
             text-decoration: none;
             margin-bottom: 20px;
             transition: all 0.3s ease;
+            text-align: center;
         }
         
         .back-button:hover {
@@ -80,7 +82,7 @@
         ← Torna agli Eventi
     </a>
 
-    <h2>📋 Dettaglio Evento</h2>
+    <h2>Dettaglio Evento</h2>
 
     <!-- Header Evento -->
     <div class="evento-dettaglio-header">
@@ -90,19 +92,19 @@
         {% endif %}
         <div class="evento-dettaglio-info">
             <div class="info-box">
-                <div class="info-box-label">📅 Data Evento</div>
+                <div class="info-box-label">Data Evento</div>
                 <div class="info-box-value">{{ evento[4] }}</div>
             </div>
             <div class="info-box">
-                <div class="info-box-label">💰 Prezzo</div>
+                <div class="info-box-label">Prezzo</div>
                 <div class="info-box-value">€{{ "%.2f"|format(evento[3]) }}</div>
             </div>
             <div class="info-box">
-                <div class="info-box-label">👥 Registrati</div>
+                <div class="info-box-label">Registrati</div>
                 <div class="info-box-value">{{ totale_iscritti }}</div>
             </div>
             <div class="info-box">
-                <div class="info-box-label">📊 Stato</div>
+                <div class="info-box-label">Stato</div>
                 <div class="info-box-value">
                     {% if evento[6] == 1 %}Attivo{% else %}Passato{% endif %}
                 </div>
@@ -112,21 +114,21 @@
 
     <!-- Lista Registrati -->
     <div class="search-section">
-        <h3>👥 Lista Registrati</h3>
+        <h3>Lista Registrati</h3>
         
         <div class="search-wrapper">
             <input type="text" 
                    id="search-input" 
                    class="search-input" 
-                   placeholder="🔍 Cerca per nome, cognome, telefono...">
-            <span class="search-icon">🔍</span>
+                   placeholder="Cerca per nome, cognome, telefono...">
+            <span class="search-icon"></span>
         </div>
         <div class="search-count" id="search-count"></div>
         
         <div class="list-view" id="registrati-list">
             {% if registrati|length == 0 %}
             <div class="no-results">
-                <div style="font-size: 48px; margin-bottom: 10px;">📭</div>
+                <div style="font-size: 48px; margin-bottom: 10px;"></div>
                 Nessun registrato per questo evento
             </div>
             {% else %}
@@ -137,29 +139,29 @@
                  data-cognome="{{ r[2]|lower }}" 
                  data-telefono="{{ r[3] }}">
                 <div class="list-item-header">
-                    <div class="list-item-name">👤 {{ r[1] }} {{ r[2] }}</div>
+                    <div class="list-item-name">{{ r[1] }} {{ r[2] }}</div>
                 </div>
                 <div class="list-item-details">
                     <div class="list-item-detail">
-                        <span class="list-item-detail-label">📱 Telefono</span>
+                        <span class="list-item-detail-label">Telefono</span>
                         <span class="list-item-detail-value">{{ r[3] }}</span>
                     </div>
                     <div class="list-item-detail">
-                        <span class="list-item-detail-label">🎂 Fascia d'età</span>
+                        <span class="list-item-detail-label">Fascia d'età</span>
                         <span class="list-item-detail-value">{{ r[4] }}</span>
                     </div>
                     <div class="list-item-detail">
-                        <span class="list-item-detail-label">🕐 Orario arrivo</span>
+                        <span class="list-item-detail-label">Orario arrivo</span>
                         <span class="list-item-detail-value">{{ r[5] }}</span>
                     </div>
                     <div class="list-item-detail">
-                        <span class="list-item-detail-label">📅 Registrato il</span>
+                        <span class="list-item-detail-label">Registrato il</span>
                         <span class="list-item-detail-value">{{ r[6] }}</span>
                     </div>
                 </div>
                 <div class="list-item-actions">
                     <button class="btn-delete" onclick="deleteRegistrazione({{ r[0] }}, '{{ r[1] }} {{ r[2] }}')">
-                        🗑️ Elimina
+                        Elimina
                     </button>
                 </div>
             </div>
@@ -173,19 +175,19 @@
 <!-- Bottom Navigation Bar -->
 <div class="bottom-nav">
     <a href="/admin/dashboard" class="nav-item">
-        <span class="nav-icon">🏠</span>
+        <span class="nav-icon"></span>
         <span class="nav-label">Dashboard</span>
     </a>
     <a href="/admin/statistiche" class="nav-item">
-        <span class="nav-icon">📊</span>
+        <span class="nav-icon"></span>
         <span class="nav-label">Statistiche</span>
     </a>
     <a href="/admin/evento/crea" class="nav-item">
-        <span class="nav-icon">➕</span>
+        <span class="nav-icon"></span>
         <span class="nav-label">Nuovo</span>
     </a>
     <a href="/admin/eventi" class="nav-item">
-        <span class="nav-icon">📅</span>
+        <span class="nav-icon"></span>
         <span class="nav-label">Eventi</span>
     </a>
 </div>
@@ -218,7 +220,7 @@ function showToast(message, type = 'info') {
 
 // Elimina registrazione con feedback migliorato
 async function deleteRegistrazione(personaId, nomeCompleto) {
-    if (!confirm(`⚠️ Sei sicuro di voler eliminare la registrazione di "${nomeCompleto}"?\n\nQuesta azione non può essere annullata!`)) {
+    if (!confirm(`Sei sicuro di voler eliminare la registrazione di "${nomeCompleto}"?\n\nQuesta azione non può essere annullata!`)) {
         return;
     }
     
@@ -246,7 +248,7 @@ async function deleteRegistrazione(personaId, nomeCompleto) {
         const data = await response.json();
         
         if (data.ok) {
-            showToast(`✅ ${data.message}`, 'success');
+            showToast(`${data.message}`, 'success');
             if (item) {
                 item.style.transition = 'all 0.3s ease';
                 item.style.transform = 'translateX(-100%)';
@@ -260,14 +262,14 @@ async function deleteRegistrazione(personaId, nomeCompleto) {
                 setTimeout(() => window.location.reload(), 1000);
             }
         } else {
-            showToast(`❌ Errore: ${data.error || 'Impossibile eliminare la registrazione'}`, 'error');
+            showToast(`Errore: ${data.error || 'Impossibile eliminare la registrazione'}`, 'error');
             if (item) {
                 item.style.opacity = '1';
                 item.style.pointerEvents = 'auto';
             }
         }
     } catch (error) {
-        showToast('❌ Errore di connessione', 'error');
+        showToast('Errore di connessione', 'error');
         if (item) {
             item.style.opacity = '1';
             item.style.pointerEvents = 'auto';
@@ -329,7 +331,7 @@ if (searchInput) {
                 noResults = document.createElement('div');
                 noResults.id = 'no-results-msg';
                 noResults.className = 'no-results';
-                noResults.innerHTML = '<div style="font-size: 48px; margin-bottom: 10px;">🔍</div>Nessun risultato trovato';
+                noResults.innerHTML = '<div style="font-size: 48px; margin-bottom: 10px;"></div>Nessun risultato trovato';
                 document.getElementById('registrati-list').appendChild(noResults);
             }
         } else if (noResults) {

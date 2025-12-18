@@ -2,19 +2,19 @@
 
 Sistema web semplice e mobile-first per la registrazione di utenti a eventi, con dashboard admin per la gestione e visualizzazione dello storico.
 
-## 🚀 Caratteristiche
+## Caratteristiche
 
 - **Registrazione Eventi**: Gli utenti possono registrarsi per eventi specifici
 - **Dashboard Admin**: Creazione eventi, visualizzazione registrazioni e storico
 - **Mobile-First**: Design responsive ottimizzato per dispositivi mobili
 - **Semplice e Veloce**: Interfaccia minimalista e facile da usare
 
-## 📋 Requisiti
+## Requisiti
 
 - Python 3.8+
 - pip
 
-## 🛠️ Installazione
+## Installazione
 
 1. Clona il repository:
 ```bash
@@ -53,7 +53,7 @@ python app.py
 
 L'applicazione sarà disponibile su `http://localhost:5002`
 
-## 📁 Struttura Progetto
+## Struttura Progetto
 
 ```
 SAMU/
@@ -70,12 +70,12 @@ SAMU/
 └── README.md
 ```
 
-## 🔐 Credenziali Default
+## Credenziali Default
 
 - **Username**: admin
 - **Password**: admin123 (cambiala subito in produzione!)
 
-## 📱 Utilizzo
+## Utilizzo
 
 ### Per gli Utenti
 1. Vai alla homepage
@@ -89,22 +89,22 @@ SAMU/
 3. Visualizza le registrazioni nella dashboard
 4. Naviga tra gli eventi passati per vedere lo storico
 
-## 🛡️ Sicurezza
+## Sicurezza
 
 - Rate limiting sui tentativi di login
 - Validazione input lato server
 - Sessioni sicure
 - Password admin configurabile via variabili d'ambiente
 
-## 📝 Licenza
+## Licenza
 
 Questo progetto è open source e disponibile sotto licenza MIT.
 
-## 👤 Autore
+## Autore
 
 Roberto Libanora
 
-## 🔗 Repository
+## Repository
 
 https://github.com/robertolibanora/Samu
 

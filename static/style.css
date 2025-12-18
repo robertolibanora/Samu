@@ -573,6 +573,34 @@ td {
 }
 
 /* ============================================
+   FOOTER
+   ============================================ */
+.app-footer {
+    background: rgba(0, 0, 0, 0.4);
+    backdrop-filter: blur(10px);
+    -webkit-backdrop-filter: blur(10px);
+    border-top: 1px solid rgba(255, 215, 0, 0.1);
+    padding: 15px 20px;
+    margin-top: 30px;
+    text-align: center;
+    position: relative;
+    z-index: 5;
+}
+
+.app-footer p {
+    margin: 0;
+    font-size: 12px;
+    color: rgba(255, 255, 255, 0.6);
+    letter-spacing: 0.5px;
+}
+
+.app-footer .footer-name {
+    color: #FFD700;
+    font-weight: 500;
+    opacity: 0.9;
+}
+
+/* ============================================
    PERFORMANCE OPTIMIZATIONS
    ============================================ */
 @media (prefers-reduced-motion: reduce) {

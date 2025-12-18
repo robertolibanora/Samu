@@ -42,11 +42,11 @@
 <body>
 <div class="overlay">
     <div class="app-content">
-    <h2>📊 Statistiche</h2>
+    <h2>Statistiche</h2>
 
     {% if user_name %}
     <div class="user-badge">
-        <span>👤</span>
+        <span></span>
         <span>{{ user_name }}</span>
     </div>
     {% endif %}
@@ -85,7 +85,7 @@
 
     {% if eta_stats|length == 0 and orario_stats|length == 0 %}
     <div class="no-results">
-        <div style="font-size: 48px; margin-bottom: 10px;">📊</div>
+        <div style="font-size: 48px; margin-bottom: 10px;"></div>
         Nessun dato disponibile
     </div>
     {% endif %}
@@ -95,19 +95,19 @@
 <!-- Bottom Navigation Bar -->
 <div class="bottom-nav">
     <a href="/admin/dashboard" class="nav-item">
-        <span class="nav-icon">🏠</span>
+        <span class="nav-icon"></span>
         <span class="nav-label">Dashboard</span>
     </a>
     <a href="/admin/statistiche" class="nav-item active">
-        <span class="nav-icon">📊</span>
+        <span class="nav-icon"></span>
         <span class="nav-label">Statistiche</span>
     </a>
     <a href="/admin/evento/crea" class="nav-item">
-        <span class="nav-icon">➕</span>
+        <span class="nav-icon"></span>
         <span class="nav-label">Nuovo</span>
     </a>
     <a href="/admin/eventi" class="nav-item">
-        <span class="nav-icon">📅</span>
+        <span class="nav-icon"></span>
         <span class="nav-label">Eventi</span>
     </a>
 </div>
@@ -328,10 +328,10 @@ function showToast(message, type = 'info', duration = 3000) {
     toast.className = `toast ${type}`;
     
     const icons = {
-        success: '✅',
-        error: '❌',
-        info: 'ℹ️',
-        warning: '⚠️'
+        success: '',
+        error: '',
+        info: '',
+        warning: ''
     };
     
     toast.innerHTML = `
