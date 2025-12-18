@@ -199,9 +199,17 @@ def init_db():
 init_db()
 
 # ---------------------------
-# ROUTE: HOME - REGISTRAZIONE
+# ROUTE: HOME - LANDING PAGE
 # ---------------------------
-@app.route("/", methods=["GET", "POST"])
+@app.route("/")
+def landing():
+    """Pagina landing pre-registrazione"""
+    return render_template("landing.html")
+
+# ---------------------------
+# ROUTE: REGISTRAZIONE
+# ---------------------------
+@app.route("/register", methods=["GET", "POST"])
 def register():
     # Carica l'evento attivo (solo uno può essere attivo)
     conn = get_db_connection()

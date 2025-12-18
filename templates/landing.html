@@ -1,0 +1,207 @@
+<!DOCTYPE html>
+<html lang="it">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
+    <meta name="theme-color" content="#000000">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black">
+    <meta name="apple-mobile-web-app-title" content="SAMU">
+    <meta name="mobile-web-app-capable" content="yes">
+    <meta name="application-name" content="SAMU">
+    <link rel="manifest" href="/manifest-register.json">
+    <link rel="apple-touch-icon" href="/static/icons/icon-152x152.png">
+    <link rel="apple-touch-icon" sizes="72x72" href="/static/icons/icon-72x72.png">
+    <link rel="apple-touch-icon" sizes="96x96" href="/static/icons/icon-96x96.png">
+    <link rel="apple-touch-icon" sizes="128x128" href="/static/icons/icon-128x128.png">
+    <link rel="apple-touch-icon" sizes="144x144" href="/static/icons/icon-144x144.png">
+    <link rel="apple-touch-icon" sizes="152x152" href="/static/icons/icon-152x152.png">
+    <link rel="apple-touch-icon" sizes="192x192" href="/static/icons/icon-192x192.png">
+    <link rel="apple-touch-icon" sizes="384x384" href="/static/icons/icon-384x384.png">
+    <link rel="apple-touch-icon" sizes="512x512" href="/static/icons/icon-512x512.png">
+    <link rel="icon" type="image/png" sizes="192x192" href="/static/icons/icon-192x192.png">
+    <link rel="icon" type="image/png" sizes="512x512" href="/static/icons/icon-512x512.png">
+    <title>SAMU</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            -webkit-tap-highlight-color: transparent;
+        }
+
+        html, body {
+            width: 100%;
+            height: 100%;
+            height: 100dvh;
+            overflow: hidden;
+            font-family: -apple-system, BlinkMacSystemFont, 'SF Pro Display', 'SF Pro Text', 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
+            -webkit-font-smoothing: antialiased;
+            -moz-osx-font-smoothing: grayscale;
+            /* Safe area per dispositivi con notch */
+            padding: env(safe-area-inset-top) env(safe-area-inset-right) env(safe-area-inset-bottom) env(safe-area-inset-left);
+        }
+
+        body {
+            background: #000000;
+            color: #ffffff;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            padding: 20px;
+            position: relative;
+        }
+
+        .landing-container {
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            width: 100%;
+            max-width: 400px;
+            text-align: center;
+            animation: fadeIn 0.8s ease-in-out;
+        }
+
+        @keyframes fadeIn {
+            from {
+                opacity: 0;
+                transform: translateY(20px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .logo-box {
+            margin-bottom: 60px;
+            animation: logoFloat 3s ease-in-out infinite;
+        }
+
+        @keyframes logoFloat {
+            0%, 100% {
+                transform: translateY(0);
+            }
+            50% {
+                transform: translateY(-10px);
+            }
+        }
+
+        .logo-box img {
+            max-width: 200px;
+            width: 100%;
+            height: auto;
+            display: block;
+            filter: drop-shadow(0 0 20px rgba(255, 215, 0, 0.3));
+        }
+
+        .landing-button {
+            width: 100%;
+            max-width: 280px;
+            min-height: 60px;
+            padding: 20px 40px;
+            background: linear-gradient(135deg, #FFD700 0%, #FFA500 50%, #FFD700 100%);
+            background-size: 200% 100%;
+            border: none;
+            color: #000000;
+            border-radius: 16px;
+            cursor: pointer;
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+            font-size: 18px;
+            font-weight: 700;
+            font-family: inherit;
+            -webkit-tap-highlight-color: transparent;
+            touch-action: manipulation;
+            box-shadow: 0 8px 24px rgba(255, 215, 0, 0.4),
+                        0 0 0 1px rgba(255, 215, 0, 0.2),
+                        inset 0 1px 0 rgba(255, 255, 255, 0.3),
+                        inset 0 -1px 0 rgba(0, 0, 0, 0.2);
+            letter-spacing: 1px;
+            text-transform: uppercase;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            text-align: center;
+            gap: 10px;
+            position: relative;
+            overflow: hidden;
+            text-decoration: none;
+        }
+
+        .landing-button::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: -100%;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.3), transparent);
+            transition: left 0.5s ease;
+        }
+
+        .landing-button:hover::before {
+            left: 100%;
+        }
+
+        .landing-button:active {
+            transform: scale(0.97) translateY(1px);
+            box-shadow: 0 4px 16px rgba(255, 215, 0, 0.3),
+                        inset 0 2px 4px rgba(0, 0, 0, 0.2);
+        }
+
+        .landing-button:hover {
+            background-position: 100% 0;
+            box-shadow: 0 10px 32px rgba(255, 215, 0, 0.5),
+                        0 0 0 1px rgba(255, 215, 0, 0.3),
+                        inset 0 1px 0 rgba(255, 255, 255, 0.4),
+                        inset 0 -1px 0 rgba(0, 0, 0, 0.2);
+            transform: translateY(-2px);
+        }
+
+        .landing-button:focus {
+            outline: none;
+            box-shadow: 0 0 0 4px rgba(255, 215, 0, 0.4),
+                        0 10px 32px rgba(255, 215, 0, 0.5),
+                        0 0 0 1px rgba(255, 215, 0, 0.3);
+        }
+
+        @media (max-width: 480px) {
+            .logo-box {
+                margin-bottom: 50px;
+            }
+
+            .logo-box img {
+                max-width: 160px;
+            }
+
+            .landing-button {
+                max-width: 240px;
+                min-height: 56px;
+                padding: 18px 32px;
+                font-size: 16px;
+            }
+        }
+
+        @media (prefers-reduced-motion: reduce) {
+            *,
+            *::before,
+            *::after {
+                animation-duration: 0.01ms !important;
+                animation-iteration-count: 1 !important;
+                transition-duration: 0.01ms !important;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="landing-container">
+        <div class="logo-box">
+            <img src="/static/logo.png" alt="Logo SAMU" onerror="this.style.display='none'">
+        </div>
+        <a href="/register" class="landing-button">Registrati</a>
+    </div>
+</body>
+</html>
+

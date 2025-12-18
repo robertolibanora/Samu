@@ -31,6 +31,7 @@ const STATIC_ASSETS = [
 // Risorse dinamiche (network-first con fallback)
 const DYNAMIC_PATTERNS = [
   /^\/$/,
+  /^\/register/,
   /^\/admin/,
   /^\/static\/icons\//
 ];
@@ -113,7 +114,8 @@ self.addEventListener('fetch', (event) => {
   // Strategia Network-First per HTML e API
   if (request.headers.get('accept')?.includes('text/html') || 
       url.pathname.startsWith('/admin') ||
-      url.pathname === '/') {
+      url.pathname === '/' ||
+      url.pathname === '/register') {
     event.respondWith(networkFirst(request));
     return;
   }
