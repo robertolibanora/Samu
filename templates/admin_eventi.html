@@ -1,0 +1,201 @@
+<!DOCTYPE html>
+<html lang="it">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
+    <meta name="theme-color" content="#FFD700">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+    <meta name="apple-mobile-web-app-title" content="SAMU Admin">
+    <link rel="manifest" href="/manifest.json">
+    <link rel="apple-touch-icon" href="/static/icon.png">
+    <title>Eventi - Admin</title>
+    <link rel="stylesheet" href="/static/style.css">
+    <link rel="stylesheet" href="/static/admin.css">
+    <link rel="stylesheet" href="/static/ux-enhancements.css">
+    <style>
+        .eventi-list {
+            margin-bottom: 80px;
+        }
+        
+        .evento-card-full {
+            background: rgba(255,255,255,0.08);
+            border-radius: 12px;
+            padding: 20px;
+            margin-bottom: 15px;
+            border-left: 4px solid transparent;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            animation: fadeInUp 0.5s ease;
+            animation-fill-mode: both;
+        }
+        
+        .evento-card-full:nth-child(1) { animation-delay: 0.1s; }
+        .evento-card-full:nth-child(2) { animation-delay: 0.2s; }
+        .evento-card-full:nth-child(3) { animation-delay: 0.3s; }
+        .evento-card-full:nth-child(4) { animation-delay: 0.4s; }
+        
+        .evento-card-full:hover {
+            background: rgba(255,255,255,0.12);
+            border-left-color: #FFD700;
+            transform: translateX(5px);
+        }
+        
+        .evento-card-full.active {
+            border-left-color: #FFD700;
+            background: rgba(255, 215, 0, 0.1);
+        }
+        
+        .evento-card-header-full {
+            display: flex;
+            justify-content: space-between;
+            align-items: flex-start;
+            margin-bottom: 12px;
+        }
+        
+        .evento-card-nome-full {
+            font-weight: 600;
+            font-size: 18px;
+            color: #fff;
+            flex: 1;
+        }
+        
+        .evento-card-meta {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 10px;
+            margin-top: 12px;
+            font-size: 13px;
+            opacity: 0.8;
+        }
+        
+        .meta-item {
+            display: flex;
+            align-items: center;
+            gap: 5px;
+        }
+    </style>
+</head>
+<body>
+<div class="overlay">
+    <div class="app-content">
+    <h2>📅 Eventi</h2>
+
+    {% if user_name %}
+    <div class="user-badge">
+        <span>👤</span>
+        <span>{{ user_name }}</span>
+    </div>
+    {% endif %}
+
+    <div class="eventi-list">
+        {% if eventi and eventi|length > 0 %}
+        {% for evento in eventi %}
+        <div class="evento-card-full {% if evento[6] == 1 %}active{% endif %}" 
+             onclick="window.location.href='/admin/evento/{{ evento[0] }}'">
+            <div class="evento-card-header-full">
+                <div class="evento-card-nome-full">{{ evento[1] }}</div>
+                <div class="badge-small {% if evento[6] == 1 %}active{% endif %}">
+                    {% if evento[6] == 1 %}✓ Attivo{% else %}Passato{% endif %}
+                </div>
+            </div>
+            {% if evento[2] %}
+            <div class="evento-desc" style="margin-bottom: 12px;">{{ evento[2] }}</div>
+            {% endif %}
+            <div class="evento-card-meta">
+                <div class="meta-item">
+                    <span>📅</span>
+                    <span>{{ evento[4] }}</span>
+                </div>
+                <div class="meta-item">
+                    <span>💰</span>
+                    <span>€{{ "%.2f"|format(evento[3]) }}</span>
+                </div>
+                <div class="meta-item">
+                    <span>👥</span>
+                    <span><strong>{{ evento[7] }}</strong> registrati</span>
+                </div>
+                <div class="meta-item">
+                    <span>🕐</span>
+                    <span>Creato: {{ evento[5][:10] }}</span>
+                </div>
+            </div>
+        </div>
+        {% endfor %}
+        {% else %}
+        <div class="no-results">
+            <div style="font-size: 48px; margin-bottom: 10px;">📭</div>
+            Nessun evento creato
+        </div>
+        {% endif %}
+    </div>
+    </div>
+</div>
+
+<!-- Bottom Navigation Bar -->
+<div class="bottom-nav">
+    <a href="/admin/dashboard" class="nav-item">
+        <span class="nav-icon">🏠</span>
+        <span class="nav-label">Dashboard</span>
+    </a>
+    <a href="/admin/statistiche" class="nav-item">
+        <span class="nav-icon">📊</span>
+        <span class="nav-label">Statistiche</span>
+    </a>
+    <a href="/admin/evento/crea" class="nav-item">
+        <span class="nav-icon">➕</span>
+        <span class="nav-label">Nuovo</span>
+    </a>
+    <a href="/admin/eventi" class="nav-item active">
+        <span class="nav-icon">📅</span>
+        <span class="nav-label">Eventi</span>
+    </a>
+</div>
+
+<!-- Toast Container -->
+<div id="toast-container"></div>
+
+<script>
+// Enhanced Toast System
+function showToast(message, type = 'info', duration = 3000) {
+    const container = document.getElementById('toast-container');
+    if (!container) return;
+    
+    const toast = document.createElement('div');
+    toast.className = `toast ${type}`;
+    
+    const icons = {
+        success: '✅',
+        error: '❌',
+        info: 'ℹ️',
+        warning: '⚠️'
+    };
+    
+    toast.innerHTML = `
+        <span class="toast-icon">${icons[type] || icons.info}</span>
+        <span class="toast-message">${message}</span>
+    `;
+    
+    container.appendChild(toast);
+    
+    if ('vibrate' in navigator) {
+        navigator.vibrate(type === 'success' ? [10, 50, 10] : [20, 50, 20]);
+    }
+    
+    setTimeout(() => {
+        toast.style.animation = 'toastSlideIn 0.3s ease reverse';
+        setTimeout(() => toast.remove(), 300);
+    }, duration);
+}
+
+// Page transition
+document.body.classList.add('page-transition');
+
+// Card hover effects
+document.querySelectorAll('.evento-card-full').forEach(card => {
+    card.classList.add('card-hover');
+});
+</script>
+</body>
+</html>
+

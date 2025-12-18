@@ -2,37 +2,294 @@
 <html lang="it">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
+    <meta name="theme-color" content="#FFD700">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+    <meta name="apple-mobile-web-app-title" content="SAMU Admin">
+    <link rel="manifest" href="/manifest.json">
+    <link rel="apple-touch-icon" href="/static/icon.png">
     <title>Crea Evento - Admin</title>
     <link rel="stylesheet" href="/static/style.css">
+    <link rel="stylesheet" href="/static/ux-enhancements.css">
+    <style>
+        .form-container {
+            animation: slideInUp 0.5s ease;
+        }
+        
+        @keyframes slideInUp {
+            from {
+                opacity: 0;
+                transform: translateY(30px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+        
+        .input-group {
+            position: relative;
+            margin-bottom: 20px;
+        }
+        
+        .input-icon {
+            position: absolute;
+            left: 12px;
+            top: 50%;
+            transform: translateY(-50%);
+            opacity: 0.5;
+            pointer-events: none;
+            font-size: 18px;
+        }
+        
+        .input-with-icon {
+            padding-left: 45px;
+        }
+        
+        .char-count {
+            font-size: 12px;
+            opacity: 0.6;
+            text-align: right;
+            margin-top: -15px;
+            margin-bottom: 15px;
+        }
+        
+        .preview-box {
+            background: rgba(255,255,255,0.05);
+            border-radius: 8px;
+            padding: 15px;
+            margin-top: 20px;
+            border: 1px solid rgba(255, 215, 0, 0.3);
+        }
+        
+        .preview-box h4 {
+            margin: 0 0 10px 0;
+            font-size: 14px;
+            opacity: 0.7;
+            text-transform: uppercase;
+        }
+        
+        .preview-content {
+            font-size: 16px;
+        }
+        
+        .preview-data {
+            font-size: 14px;
+            opacity: 0.8;
+            margin-top: 8px;
+        }
+        
+        .btn-group {
+            display: flex;
+            gap: 10px;
+            margin-top: 20px;
+        }
+        
+        .btn-secondary {
+            flex: 1;
+            background: rgba(255,255,255,0.1);
+            border: 1px solid rgba(255,255,255,0.3);
+        }
+        
+        .btn-secondary:hover {
+            background: rgba(255,255,255,0.2);
+        }
+    </style>
 </head>
 <body>
 <div class="overlay">
-    <h2>Crea Nuovo Evento</h2>
+    <div class="app-content">
+    <h2>➕ Crea Nuovo Evento</h2>
 
     {% if error %}
-    <div class="error-message-box">
-        {{ error }}
+    <div class="error-message-box" style="animation: shake 0.5s ease;">
+        <strong>⚠️ Errore:</strong> {{ error }}
     </div>
     {% endif %}
 
-    <form method="POST">
-        <label>Nome Evento:</label>
-        <input type="text" name="nome" required maxlength="200" placeholder="Es: Concerto Rock 2025">
+    <form method="POST" class="form-container">
+        <div class="input-group">
+            <span class="input-icon">📝</span>
+            <label>Nome Evento:</label>
+            <input type="text" name="nome" required maxlength="200" class="input-with-icon" placeholder="Es: Concerto Rock 2025" id="nome-input">
+            <div class="char-count"><span id="nome-count">0</span>/200</div>
+        </div>
 
-        <label>Descrizione:</label>
-        <textarea name="descrizione" rows="4" style="width: 100%; padding: 12px; margin-top: 4px; margin-bottom: 18px; border: none; border-radius: 6px; background: rgba(255,255,255,0.1); color: #fff; font-size: 16px; font-family: inherit; resize: vertical;" placeholder="Descrizione opzionale dell'evento..."></textarea>
+        <div class="input-group">
+            <span class="input-icon">📄</span>
+            <label>Descrizione:</label>
+            <textarea name="descrizione" rows="4" class="input-with-icon" placeholder="Descrizione opzionale dell'evento..." id="desc-input" maxlength="500"></textarea>
+            <div class="char-count"><span id="desc-count">0</span>/500</div>
+        </div>
 
-        <label>Prezzo (€):</label>
-        <input type="number" name="prezzo" step="0.01" min="0" value="0" placeholder="0.00">
+        <div class="input-group">
+            <span class="input-icon">📅</span>
+            <label>Data Evento: <span style="color: #FFD700;">*</span></label>
+            <input type="date" name="data_evento" required class="input-with-icon" id="data-evento-input">
+            <div class="input-feedback" id="data-feedback"></div>
+        </div>
 
-        <button type="submit">Crea Evento</button>
+        <div class="input-group">
+            <span class="input-icon">💰</span>
+            <label>Prezzo (€):</label>
+            <input type="number" name="prezzo" step="0.01" min="0" value="0" placeholder="0.00" class="input-with-icon" id="prezzo-input">
+            <div class="char-count" id="prezzo-info">Lascia 0 per evento gratuito</div>
+        </div>
+        
+        <!-- Preview -->
+        <div class="preview-box" id="preview-box" style="display: none;">
+            <h4>Anteprima Evento</h4>
+            <div class="preview-content">
+                <div style="font-weight: 600; margin-bottom: 8px;" id="preview-nome">-</div>
+                <div style="font-size: 14px; opacity: 0.8; margin-bottom: 8px;" id="preview-desc">-</div>
+                <div class="preview-data">
+                    <div>📅 Data: <span id="preview-data">-</span></div>
+                    <div style="font-size: 18px; font-weight: bold; color: #FFD700; margin-top: 8px;" id="preview-prezzo">€0.00</div>
+                </div>
+            </div>
+        </div>
+
+        <div class="btn-group">
+            <a href="/admin/dashboard" style="text-decoration: none; flex: 1;">
+                <button type="button" class="btn-secondary">← Annulla</button>
+            </a>
+            <button type="submit" style="flex: 2;">✓ Crea Evento</button>
+        </div>
     </form>
+</div>
 
-    <div class="logout-link" style="margin-top: 20px;">
-        <a href="/admin">← Torna alla Dashboard</a>
+<!-- Bottom Navigation Bar -->
+<div class="bottom-nav">
+    <a href="/admin/dashboard" class="nav-item">
+        <span class="nav-icon">🏠</span>
+        <span class="nav-label">Dashboard</span>
+    </a>
+    <a href="/admin/statistiche" class="nav-item">
+        <span class="nav-icon">📊</span>
+        <span class="nav-label">Statistiche</span>
+    </a>
+    <a href="/admin/evento/crea" class="nav-item active">
+        <span class="nav-icon">➕</span>
+        <span class="nav-label">Nuovo</span>
+    </a>
+    <a href="/admin/eventi" class="nav-item">
+        <span class="nav-icon">📅</span>
+        <span class="nav-label">Eventi</span>
+    </a>
     </div>
 </div>
+    </form>
+</div>
+
+<script>
+// Contatori caratteri
+const nomeInput = document.getElementById('nome-input');
+const descInput = document.getElementById('desc-input');
+const dataInput = document.getElementById('data-evento-input');
+const prezzoInput = document.getElementById('prezzo-input');
+const previewBox = document.getElementById('preview-box');
+
+function updateCharCount(input, countEl, max) {
+    const length = input.value.length;
+    countEl.textContent = length;
+    if (length > max * 0.9) {
+        countEl.parentElement.style.color = '#FFD700';
+    } else {
+        countEl.parentElement.style.color = '';
+    }
+}
+
+function updatePreview() {
+    const nome = nomeInput.value || '-';
+    const desc = descInput.value || '-';
+    const data = dataInput.value || '-';
+    const prezzo = parseFloat(prezzoInput.value) || 0;
+    
+    document.getElementById('preview-nome').textContent = nome;
+    document.getElementById('preview-desc').textContent = desc;
+    document.getElementById('preview-data').textContent = data !== '-' ? new Date(data).toLocaleDateString('it-IT') : '-';
+    document.getElementById('preview-prezzo').textContent = prezzo > 0 ? `€${prezzo.toFixed(2)}` : 'Gratis';
+    
+    if (nomeInput.value || descInput.value || dataInput.value || prezzoInput.value) {
+        previewBox.style.display = 'block';
+    } else {
+        previewBox.style.display = 'none';
+    }
+}
+
+if (nomeInput) {
+    nomeInput.addEventListener('input', function() {
+        updateCharCount(this, document.getElementById('nome-count'), 200);
+        updatePreview();
+    });
+}
+
+if (descInput) {
+    descInput.addEventListener('input', function() {
+        updateCharCount(this, document.getElementById('desc-count'), 500);
+        updatePreview();
+    });
+}
+
+if (dataInput) {
+    // Imposta data minima a oggi
+    const today = new Date().toISOString().split('T')[0];
+    dataInput.min = today;
+    
+    dataInput.addEventListener('change', function() {
+        const feedback = document.getElementById('data-feedback');
+        if (this.value) {
+            feedback.textContent = '✓ Data selezionata';
+            feedback.className = 'input-feedback show valid';
+        }
+        updatePreview();
+    });
+}
+
+if (prezzoInput) {
+    prezzoInput.addEventListener('input', function() {
+        const prezzo = parseFloat(this.value) || 0;
+        const info = document.getElementById('prezzo-info');
+        if (prezzo > 0) {
+            info.textContent = `Prezzo: €${prezzo.toFixed(2)}`;
+            info.style.color = '#FFD700';
+        } else {
+            info.textContent = 'Lascia 0 per evento gratuito';
+            info.style.color = '';
+        }
+        updatePreview();
+    });
+}
+
+// Animazione shake
+const style = document.createElement('style');
+style.textContent = `
+    @keyframes shake {
+        0%, 100% { transform: translateX(0); }
+        25% { transform: translateX(-10px); }
+        75% { transform: translateX(10px); }
+    }
+`;
+document.head.appendChild(style);
+
+// Page transition
+document.body.classList.add('page-transition');
+
+// Form submit loading
+const form = document.querySelector('form');
+if (form) {
+    form.addEventListener('submit', function() {
+        const submitBtn = form.querySelector('button[type="submit"]');
+        if (submitBtn) {
+            submitBtn.disabled = true;
+            submitBtn.innerHTML = '<span class="loading-spinner"></span> Creazione evento...';
+            if ('vibrate' in navigator) {
+                navigator.vibrate([10, 50, 10]);
+            }
+        }
+    });
+}
+</script>
 </body>
 </html>
-

@@ -3,48 +3,141 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <meta name="theme-color" content="#000000">
-    <meta name="apple-mobile-web-app-capable" content="yes">
-    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
-    <meta name="apple-mobile-web-app-title" content="Reg Evento">
-    <title>Login Sistema</title>
-    <link rel="stylesheet" href="/static/style.css">
+    <meta name="theme-color" content="#FFD700">
     <link rel="manifest" href="/manifest.json">
     <link rel="apple-touch-icon" href="/static/icon.png">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+    <meta name="apple-mobile-web-app-title" content="SAMU Admin">
+    <title>Login Admin - SAMU</title>
+    <link rel="stylesheet" href="/static/style.css">
+    <link rel="stylesheet" href="/static/ux-enhancements.css">
+    <style>
+        .login-form {
+            animation: slideInUp 0.5s ease;
+        }
+        
+        @keyframes slideInUp {
+            from {
+                opacity: 0;
+                transform: translateY(30px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+        
+        .login-header {
+            text-align: center;
+            margin-bottom: 30px;
+        }
+        
+        .login-icon {
+            font-size: 64px;
+            margin-bottom: 15px;
+            animation: bounce 2s infinite;
+        }
+        
+        @keyframes bounce {
+            0%, 100% { transform: translateY(0); }
+            50% { transform: translateY(-10px); }
+        }
+        
+        .input-group {
+            position: relative;
+            margin-bottom: 20px;
+        }
+        
+        .input-icon {
+            position: absolute;
+            left: 12px;
+            top: 50%;
+            transform: translateY(-50%);
+            opacity: 0.5;
+            pointer-events: none;
+            font-size: 18px;
+        }
+        
+        .input-with-icon {
+            padding-left: 45px;
+        }
+        
+        .password-toggle {
+            position: absolute;
+            right: 12px;
+            top: 50%;
+            transform: translateY(-50%);
+            background: none;
+            border: none;
+            color: rgba(255, 255, 255, 0.7);
+            cursor: pointer;
+            font-size: 18px;
+            padding: 5px;
+            -webkit-tap-highlight-color: transparent;
+        }
+        
+        .password-toggle:hover {
+            color: #fff;
+        }
+    </style>
 </head>
 <body>
 <div class="overlay">
-    <h2>Accesso Sistema</h2>
+    <div class="app-content">
+    <div class="login-header">
+        <div class="login-icon">🔐</div>
+        <h2>Accesso Admin</h2>
+        <p style="opacity: 0.7; font-size: 14px;">Sistema di gestione eventi SAMU</p>
+    </div>
 
     <form method="POST" class="login-form">
-        <label>Username:</label>
-        <input type="text" name="username" required autofocus>
+        <div class="input-group">
+            <span class="input-icon">👤</span>
+            <label>Username:</label>
+            <input type="text" name="username" required autofocus class="input-with-icon" placeholder="Inserisci username">
+        </div>
         
-        <label>Password:</label>
-        <input type="password" name="password" required>
+        <div class="input-group">
+            <span class="input-icon">🔒</span>
+            <label>Password:</label>
+            <input type="password" name="password" required class="input-with-icon" id="password-input" placeholder="Inserisci password">
+            <button type="button" class="password-toggle" onclick="togglePassword()">👁️</button>
+        </div>
         
         {% if error %}
-        <p class="error-message">{{ error }}</p>
+        <div class="error-message-box" style="animation: shake 0.5s ease;">
+            <strong>⚠️ Errore:</strong> {{ error }}
+        </div>
         {% endif %}
 
-        <button type="submit">Accedi</button>
+        <button type="submit">🚀 Accedi</button>
     </form>
 </div>
 
 <script>
-// Registra Service Worker per PWA
-if ('serviceWorker' in navigator) {
-    window.addEventListener('load', () => {
-        navigator.serviceWorker.register('/sw.js')
-            .then((registration) => {
-                console.log('Service Worker registrato:', registration.scope);
-            })
-            .catch((error) => {
-                console.log('Service Worker registrazione fallita:', error);
-            });
-    });
+function togglePassword() {
+    const input = document.getElementById('password-input');
+    const button = event.target;
+    if (input.type === 'password') {
+        input.type = 'text';
+        button.textContent = '🙈';
+    } else {
+        input.type = 'password';
+        button.textContent = '👁️';
+    }
 }
+
+// Animazione shake per errori
+const style = document.createElement('style');
+style.textContent = `
+    @keyframes shake {
+        0%, 100% { transform: translateX(0); }
+        25% { transform: translateX(-10px); }
+        75% { transform: translateX(10px); }
+    }
+`;
+document.head.appendChild(style);
 </script>
 </body>
 </html>
-

@@ -2,11 +2,13 @@
   "name": "SAMU",
   "short_name": "SAMU",
   "description": "Sistema di registrazione eventi",
-  "start_url": "/admin/login",
+  "start_url": "/",
   "display": "standalone",
   "background_color": "#000000",
-  "theme_color": "#000000",
+  "theme_color": "#FFD700",
   "orientation": "portrait-primary",
+  "scope": "/",
+  "prefer_related_applications": false,
   "icons": [
     {
       "src": "/static/icon.png",

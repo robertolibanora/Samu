@@ -2,77 +2,429 @@
 <html lang="it">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>Registrazione Evento</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
+    <meta name="theme-color" content="#FFD700">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+    <meta name="apple-mobile-web-app-title" content="SAMU">
+    <link rel="manifest" href="/manifest.json">
+    <link rel="apple-touch-icon" href="/static/icon.png">
+    <title>Registrazione SAMU</title>
     <link rel="stylesheet" href="/static/style.css">
+    <link rel="stylesheet" href="/static/ux-enhancements.css">
+    <style>
+        .evento-info {
+            background: rgba(255,255,255,0.08);
+            border-radius: 10px;
+            padding: 20px;
+            margin-bottom: 25px;
+            border-left: 4px solid #FFD700;
+            animation: slideIn 0.5s ease;
+        }
+        
+        @keyframes slideIn {
+            from { opacity: 0; transform: translateY(-10px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+        
+        .evento-info-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 10px;
+        }
+        
+        .evento-info-nome {
+            font-weight: 600;
+            font-size: 20px;
+            color: #fff;
+        }
+        
+        .evento-info-prezzo {
+            font-size: 24px;
+            font-weight: bold;
+            color: #FFD700;
+        }
+        
+        .evento-info-desc {
+            font-size: 14px;
+            opacity: 0.8;
+            margin-top: 10px;
+            line-height: 1.5;
+        }
+        
+        .input-group {
+            position: relative;
+            margin-bottom: 20px;
+        }
+        
+        .input-icon {
+            position: absolute;
+            left: 12px;
+            top: 50%;
+            transform: translateY(-50%);
+            opacity: 0.5;
+            pointer-events: none;
+        }
+        
+        .input-with-icon {
+            padding-left: 40px;
+        }
+        
+        .input-feedback {
+            font-size: 12px;
+            margin-top: 5px;
+            opacity: 0.7;
+            display: none;
+        }
+        
+        .input-feedback.show {
+            display: block;
+        }
+        
+        .input-feedback.valid {
+            color: #00ff00;
+        }
+        
+        .input-feedback.invalid {
+            color: #ff4444;
+        }
+        
+        .eta-fascia-group {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(100px, 1fr));
+            gap: 10px;
+            margin-top: 8px;
+        }
+        
+        .eta-fascia-option {
+            padding: 12px;
+            background: rgba(255,255,255,0.1);
+            border: 2px solid rgba(255,255,255,0.3);
+            border-radius: 8px;
+            text-align: center;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            font-size: 14px;
+        }
+        
+        .eta-fascia-option:hover {
+            background: rgba(255,255,255,0.15);
+            border-color: rgba(255, 215, 0, 0.5);
+        }
+        
+        .eta-fascia-option.selected {
+            background: rgba(255, 215, 0, 0.2);
+            border-color: #FFD700;
+            color: #FFD700;
+            font-weight: 600;
+        }
+        
+        .success-animation {
+            text-align: center;
+            padding: 30px;
+        }
+        
+        .success-icon {
+            font-size: 64px;
+            margin-bottom: 20px;
+            animation: scaleIn 0.5s ease;
+        }
+        
+        @keyframes scaleIn {
+            0% { transform: scale(0); }
+            50% { transform: scale(1.2); }
+            100% { transform: scale(1); }
+        }
+    </style>
 </head>
 <body>
 <div class="overlay">
-
+    <div class="app-content">
     <!-- LOGO CENTRALE -->
     <div class="logo-box">
-        <img src="/static/logo.png" alt="Logo Evento">
+        <img src="/static/logo.png" alt="Logo SAMU" onerror="this.style.display='none'">
     </div>
 
     <h2>Registrazione SAMU</h2>
 
     {% if error %}
-    <div class="error-message-box">
-        {{ error }}
+    <div class="error-message-box" style="animation: shake 0.5s ease;">
+        <strong>⚠️ Errore:</strong> {{ error }}
     </div>
     {% endif %}
 
-    {% if not eventi or eventi|length == 0 %}
+    {% if not evento %}
     <div class="error-message-box">
-        Nessun evento disponibile al momento. Contatta l'amministratore.
+        <strong>ℹ️ Nessun evento disponibile</strong><br>
+        Contatta l'amministratore per maggiori informazioni.
     </div>
     {% else %}
 
-    <form method="POST">
-        <label>Seleziona Evento:</label>
-        <select name="evento_id" required style="width: 100%; padding: 12px; margin-top: 4px; margin-bottom: 18px; border: none; border-radius: 6px; background: rgba(255,255,255,0.1); color: #fff; font-size: 16px; -webkit-appearance: none; -moz-appearance: none; appearance: none;">
-            <option value="">-- Seleziona un evento --</option>
-            {% for evento in eventi %}
-            <option value="{{ evento[0] }}">
-                {{ evento[1] }} {% if evento[3] > 0 %}- €{{ "%.2f"|format(evento[3]) }}{% endif %}
-            </option>
-            {% endfor %}
-        </select>
-        {% if eventi|length > 0 %}
-        <div style="font-size: 12px; opacity: 0.7; margin-top: -15px; margin-bottom: 15px;">
-            {% for evento in eventi %}
-            {% if evento[2] %}
-            <div style="margin-bottom: 5px;"><strong>{{ evento[1] }}:</strong> {{ evento[2] }}</div>
-            {% endif %}
-            {% endfor %}
+    {% if success %}
+    <div class="success-animation">
+        <div class="success-icon">✅</div>
+        <div class="success-message-box" style="margin: 0;">
+            <strong>Registrazione completata!</strong><br>
+            {{ success }}
         </div>
+    </div>
+    {% else %}
+
+    <!-- Info Evento Corrente -->
+    <div class="evento-info">
+        <div class="evento-info-header">
+            <div class="evento-info-nome">{{ evento[1] }}</div>
+            {% if evento[3] > 0 %}
+            <div class="evento-info-prezzo">€{{ "%.2f"|format(evento[3]) }}</div>
+            {% else %}
+            <div class="evento-info-prezzo" style="color: #FFD700;">Gratis</div>
+            {% endif %}
+        </div>
+        {% if evento[2] %}
+        <div class="evento-info-desc">{{ evento[2] }}</div>
         {% endif %}
+    </div>
 
-        <label>Nome:</label>
-        <input type="text" name="nome" required>
+    <form method="POST" id="registrationForm">
+        <div class="input-group">
+            <span class="input-icon">👤</span>
+            <label>Nome: <span style="color: #FFD700;">*</span></label>
+            <input type="text" name="nome" required class="input-with-icon" placeholder="Il tuo nome" autocomplete="given-name" id="nome-input">
+            <div class="input-feedback" id="nome-feedback"></div>
+        </div>
 
-        <label>Cognome:</label>
-        <input type="text" name="cognome" required>
+        <div class="input-group">
+            <span class="input-icon">👤</span>
+            <label>Cognome: <span style="color: #FFD700;">*</span></label>
+            <input type="text" name="cognome" required class="input-with-icon" placeholder="Il tuo cognome" autocomplete="family-name" id="cognome-input">
+            <div class="input-feedback" id="cognome-feedback"></div>
+        </div>
 
-        <label>Data di nascita:</label>
-        <input type="date" name="data_nascita" required>
+        <div class="input-group">
+            <span class="input-icon">📱</span>
+            <label>Telefono: <span style="color: #FFD700;">*</span></label>
+            <input type="tel" name="telefono" required class="input-with-icon" placeholder="3XX XXX XXXX" pattern="3[0-9]{8,14}" autocomplete="tel" id="telefono-input">
+            <div class="input-feedback" id="telefono-feedback">Il numero deve iniziare con 3</div>
+        </div>
 
-        <label>Luogo di nascita:</label>
-        <input type="text" name="luogo_nascita" required>
+        <div class="input-group">
+            <label>Fascia d'età: <span style="color: #FFD700;">*</span></label>
+            <input type="hidden" name="eta_fascia" id="eta_fascia_input" required>
+            <div class="eta-fascia-group">
+                <div class="eta-fascia-option" data-value=">18" onclick="selectEtaFascia('>18')">
+                    &lt;18
+                </div>
+                <div class="eta-fascia-option" data-value="18-21" onclick="selectEtaFascia('18-21')">
+                    18-21
+                </div>
+                <div class="eta-fascia-option" data-value="21-25" onclick="selectEtaFascia('21-25')">
+                    21-25
+                </div>
+                <div class="eta-fascia-option" data-value="25-30" onclick="selectEtaFascia('25-30')">
+                    25-30
+                </div>
+                <div class="eta-fascia-option" data-value="30+" onclick="selectEtaFascia('30+')">
+                    30+
+                </div>
+            </div>
+            <div class="input-feedback" id="eta-feedback"></div>
+        </div>
 
-        <label>Telefono:</label>
-        <input type="tel" name="telefono" required>
+        <div class="input-group">
+            <span class="input-icon">🕐</span>
+            <label>Orario di arrivo: <span style="color: #FFD700;">*</span></label>
+            <input type="time" name="orario_arrivo" required class="input-with-icon" id="orario-input">
+            <div class="input-feedback" id="orario-feedback"></div>
+        </div>
 
-        <button type="submit">Registrati</button>
+        <button type="submit">✓ Completa Registrazione</button>
     </form>
 
-    {% if success %}
-    <div class="success-message-box">
-        {{ success }}
+    {% endif %}
+    {% endif %}
     </div>
-    {% endif %}
-
-    {% endif %}
 </div>
+
+<!-- Toast Container -->
+<div id="toast-container"></div>
+
+<!-- Loading Overlay -->
+<div class="loading-overlay" id="loadingOverlay">
+    <div class="loading-content">
+        <div class="loading-spinner"></div>
+        <div>Caricamento...</div>
+    </div>
+</div>
+
+<script>
+let selectedEtaFascia = null;
+
+function selectEtaFascia(value) {
+    selectedEtaFascia = value;
+    document.getElementById('eta_fascia_input').value = value;
+    
+    // Rimuovi selezione precedente
+    document.querySelectorAll('.eta-fascia-option').forEach(opt => {
+        opt.classList.remove('selected');
+    });
+    
+    // Aggiungi selezione nuova
+    document.querySelector(`[data-value="${value}"]`).classList.add('selected');
+    
+    // Feedback
+    const feedback = document.getElementById('eta-feedback');
+    feedback.textContent = '✓ Fascia selezionata';
+    feedback.className = 'input-feedback show valid';
+}
+
+// Validazione in tempo reale con feedback visivo migliorato
+document.addEventListener('DOMContentLoaded', function() {
+    const nomeInput = document.getElementById('nome-input');
+    const cognomeInput = document.getElementById('cognome-input');
+    const telefonoInput = document.getElementById('telefono-input');
+    const orarioInput = document.getElementById('orario-input');
+    
+    function validateInput(input, feedbackId, minLength, validationFn) {
+        const feedback = document.getElementById(feedbackId);
+        const inputGroup = input.closest('.input-group');
+        
+        if (!inputGroup) return;
+        
+        if (input.value.length === 0) {
+            inputGroup.classList.remove('error', 'success');
+            feedback.className = 'input-feedback';
+            return;
+        }
+        
+        const isValid = validationFn ? validationFn(input.value) : input.value.length >= minLength;
+        
+        if (isValid) {
+            inputGroup.classList.remove('error');
+            inputGroup.classList.add('success');
+            feedback.textContent = '✓ Valido';
+            feedback.className = 'input-feedback show valid';
+            hapticFeedback('light');
+        } else {
+            inputGroup.classList.remove('success');
+            inputGroup.classList.add('error');
+            feedback.className = 'input-feedback show invalid';
+        }
+    }
+    
+    if (nomeInput) {
+        nomeInput.addEventListener('input', function() {
+            validateInput(this, 'nome-feedback', 2, (val) => val.length >= 2 && val.length <= 100);
+        });
+        nomeInput.addEventListener('blur', function() {
+            if (this.value.length > 0 && this.value.length < 2) {
+                this.closest('.input-group')?.classList.add('error');
+            }
+        });
+    }
+    
+    if (cognomeInput) {
+        cognomeInput.addEventListener('input', function() {
+            validateInput(this, 'cognome-feedback', 2, (val) => val.length >= 2 && val.length <= 100);
+        });
+        cognomeInput.addEventListener('blur', function() {
+            if (this.value.length > 0 && this.value.length < 2) {
+                this.closest('.input-group')?.classList.add('error');
+            }
+        });
+    }
+    
+    if (telefonoInput) {
+        telefonoInput.addEventListener('input', function() {
+            const value = this.value.replace(/\D/g, '');
+            const feedback = document.getElementById('telefono-feedback');
+            const inputGroup = this.closest('.input-group');
+            
+            if (value.length === 0) {
+                inputGroup?.classList.remove('error', 'success');
+                feedback.textContent = 'Il numero deve iniziare con 3';
+                feedback.className = 'input-feedback show';
+                return;
+            }
+            
+            if (value.startsWith('3') && value.length >= 9 && value.length <= 15) {
+                inputGroup?.classList.remove('error');
+                inputGroup?.classList.add('success');
+                feedback.textContent = '✓ Numero valido';
+                feedback.className = 'input-feedback show valid';
+                hapticFeedback('light');
+            } else {
+                inputGroup?.classList.remove('success');
+                inputGroup?.classList.add('error');
+                if (!value.startsWith('3')) {
+                    feedback.textContent = 'Il numero deve iniziare con 3';
+                } else if (value.length < 9) {
+                    feedback.textContent = 'Numero troppo corto (min 9 cifre)';
+                } else {
+                    feedback.textContent = 'Numero troppo lungo (max 15 cifre)';
+                }
+                feedback.className = 'input-feedback show invalid';
+            }
+        });
+    }
+    
+    if (orarioInput) {
+        orarioInput.addEventListener('change', function() {
+            const feedback = document.getElementById('orario-feedback');
+            const inputGroup = this.closest('.input-group');
+            if (this.value) {
+                inputGroup?.classList.remove('error');
+                inputGroup?.classList.add('success');
+                feedback.textContent = '✓ Orario selezionato';
+                feedback.className = 'input-feedback show valid';
+                hapticFeedback('light');
+            }
+        });
+    }
+    
+    // Validazione form submit con loading state
+    const form = document.getElementById('registrationForm');
+    if (form) {
+        form.addEventListener('submit', function(e) {
+            if (!selectedEtaFascia) {
+                e.preventDefault();
+                const feedback = document.getElementById('eta-feedback');
+                feedback.textContent = 'Seleziona una fascia d\'età';
+                feedback.className = 'input-feedback show invalid';
+                hapticFeedback('error');
+                
+                // Scroll alla fascia d'età
+                document.querySelector('.eta-fascia-group')?.scrollIntoView({ 
+                    behavior: 'smooth', 
+                    block: 'center' 
+                });
+                return false;
+            }
+            
+            // Mostra loading state
+            const submitBtn = form.querySelector('button[type="submit"]');
+            if (submitBtn) {
+                submitBtn.disabled = true;
+                submitBtn.innerHTML = '<span class="loading-spinner"></span> Registrazione in corso...';
+                hapticFeedback('medium');
+            }
+        });
+    }
+    
+    // Aggiungi classe page-transition per animazione
+    document.body.classList.add('page-transition');
+});
+
+// Animazione shake per errori
+const style = document.createElement('style');
+style.textContent = `
+    @keyframes shake {
+        0%, 100% { transform: translateX(0); }
+        25% { transform: translateX(-10px); }
+        75% { transform: translateX(10px); }
+    }
+`;
+document.head.appendChild(style);
+</script>
 </body>
 </html>

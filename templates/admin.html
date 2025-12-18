@@ -2,9 +2,16 @@
 <html lang="it">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
+    <meta name="theme-color" content="#FFD700">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+    <meta name="apple-mobile-web-app-title" content="SAMU Admin">
+    <link rel="manifest" href="/manifest.json">
+    <link rel="apple-touch-icon" href="/static/icon.png">
     <title>Admin - Dashboard</title>
     <link rel="stylesheet" href="/static/style.css">
+    <link rel="stylesheet" href="/static/ux-enhancements.css">
     <style>
         .stats-box {
             background: rgba(255,255,255,0.08);
@@ -13,13 +20,44 @@
             backdrop-filter: blur(4px);
             text-align: center;
             margin-bottom: 20px;
+            animation: slideIn 0.5s ease;
+            position: relative;
+            overflow: hidden;
+        }
+        
+        .stats-box::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: -100%;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(90deg, transparent, rgba(0,255,255,0.1), transparent);
+            animation: shimmer 3s infinite;
+        }
+        
+        @keyframes shimmer {
+            0% { left: -100%; }
+            100% { left: 100%; }
+        }
+        
+        @keyframes slideIn {
+            from { opacity: 0; transform: translateY(20px); }
+            to { opacity: 1; transform: translateY(0); }
         }
 
         .stats-box .stat-value {
-            font-size: 36px;
+            font-size: 48px;
             font-weight: bold;
             margin: 10px 0;
-            color: #00FFFF;
+            color: #FFD700;
+            text-shadow: 0 0 20px rgba(255, 215, 0, 0.5);
+            animation: pulse 2s infinite;
+        }
+        
+        @keyframes pulse {
+            0%, 100% { transform: scale(1); }
+            50% { transform: scale(1.05); }
         }
 
         .eventi-section {
@@ -37,16 +75,37 @@
             margin-bottom: 10px;
             border-left: 3px solid transparent;
             cursor: pointer;
-            transition: 0.2s;
+            transition: all 0.3s ease;
+            animation: fadeInUp 0.5s ease;
+            animation-fill-mode: both;
         }
+        
+        @keyframes fadeInUp {
+            from {
+                opacity: 0;
+                transform: translateY(10px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+        
+        .evento-item:nth-child(1) { animation-delay: 0.1s; }
+        .evento-item:nth-child(2) { animation-delay: 0.2s; }
+        .evento-item:nth-child(3) { animation-delay: 0.3s; }
+        .evento-item:nth-child(4) { animation-delay: 0.4s; }
 
         .evento-item:hover {
-            background: rgba(255,255,255,0.1);
+            background: rgba(255,255,255,0.12);
+            transform: translateX(5px);
+            box-shadow: 0 4px 12px rgba(255, 215, 0, 0.2);
         }
 
         .evento-item.active {
-            border-left-color: #00FFFF;
-            background: rgba(0, 255, 255, 0.1);
+            border-left-color: #FFD700;
+            background: rgba(255, 215, 0, 0.15);
+            box-shadow: 0 0 20px rgba(255, 215, 0, 0.3);
         }
 
         .evento-header {
@@ -66,13 +125,20 @@
             font-size: 12px;
             padding: 4px 10px;
             border-radius: 12px;
-            background: rgba(0, 255, 255, 0.2);
-            color: #00FFFF;
+            background: rgba(255, 215, 0, 0.2);
+            color: #FFD700;
+            animation: glow 2s infinite;
+        }
+        
+        @keyframes glow {
+            0%, 100% { box-shadow: 0 0 5px rgba(255, 215, 0, 0.5); }
+            50% { box-shadow: 0 0 15px rgba(255, 215, 0, 0.8); }
         }
 
         .evento-badge.inactive {
             background: rgba(255, 255, 255, 0.2);
             color: #fff;
+            animation: none;
         }
 
         .evento-details {
@@ -83,46 +149,74 @@
 
         .btn-crea-evento {
             width: 100%;
-            padding: 12px;
-            background: #00BFFF;
+            padding: 14px;
+            background: linear-gradient(135deg, #FFA500, #DAA520);
             border: none;
-            border-radius: 6px;
+            border-radius: 8px;
             color: #fff;
             cursor: pointer;
-            font-size: 14px;
-            font-weight: 500;
-            transition: 0.2s;
+            font-size: 16px;
+            font-weight: 600;
+            transition: all 0.3s ease;
             margin-bottom: 15px;
+            box-shadow: 0 4px 15px rgba(0, 191, 255, 0.3);
         }
 
         .btn-crea-evento:hover {
-            background: #0099CC;
+            transform: translateY(-2px);
+            box-shadow: 0 6px 20px rgba(0, 191, 255, 0.4);
+        }
+        
+        .btn-crea-evento:active {
+            transform: translateY(0);
         }
 
         .search-section {
             margin-top: 30px;
         }
+        
+        .search-wrapper {
+            position: relative;
+            margin-bottom: 15px;
+        }
 
         .search-input {
             width: 100%;
-            padding: 12px;
-            margin-bottom: 15px;
+            padding: 12px 40px 12px 12px;
             border: none;
-            border-radius: 6px;
+            border-radius: 8px;
             background: rgba(255,255,255,0.1);
             color: #fff;
             font-size: 16px;
-            border: 1px solid rgba(0, 255, 255, 0.3);
+            border: 2px solid rgba(255, 215, 0, 0.3);
+            transition: all 0.3s ease;
         }
 
         .search-input:focus {
             outline: none;
-            border-color: #00FFFF;
-            box-shadow: 0 0 10px rgba(0, 255, 255, 0.3);
+            border-color: #FFD700;
+            box-shadow: 0 0 15px rgba(255, 215, 0, 0.3);
+            background: rgba(255,255,255,0.15);
         }
 
         .search-input::placeholder {
-            color: #bbb;
+            color: rgba(255, 255, 255, 0.5);
+        }
+        
+        .search-icon {
+            position: absolute;
+            right: 12px;
+            top: 50%;
+            transform: translateY(-50%);
+            opacity: 0.5;
+            pointer-events: none;
+        }
+        
+        .search-count {
+            font-size: 12px;
+            opacity: 0.7;
+            margin-top: 5px;
+            text-align: right;
         }
 
         .list-view {
@@ -136,7 +230,32 @@
             padding: 12px 15px;
             margin-bottom: 10px;
             backdrop-filter: blur(4px);
-            border-left: 3px solid #00FFFF;
+            border-left: 3px solid #FFD700;
+            transition: all 0.3s ease;
+            animation: slideInLeft 0.4s ease;
+            animation-fill-mode: both;
+        }
+        
+        @keyframes slideInLeft {
+            from {
+                opacity: 0;
+                transform: translateX(-20px);
+            }
+            to {
+                opacity: 1;
+                transform: translateX(0);
+            }
+        }
+        
+        .list-item:nth-child(1) { animation-delay: 0.05s; }
+        .list-item:nth-child(2) { animation-delay: 0.1s; }
+        .list-item:nth-child(3) { animation-delay: 0.15s; }
+        .list-item:nth-child(4) { animation-delay: 0.2s; }
+        .list-item:nth-child(5) { animation-delay: 0.25s; }
+
+        .list-item:hover {
+            transform: translateX(5px);
+            box-shadow: 0 4px 12px rgba(255, 215, 0, 0.2);
         }
 
         .list-item-header {
@@ -184,10 +303,16 @@
             opacity: 0.6;
             background: rgba(255,255,255,0.05);
             border-radius: 10px;
+            animation: fadeIn 0.5s ease;
+        }
+        
+        @keyframes fadeIn {
+            from { opacity: 0; }
+            to { opacity: 1; }
         }
 
         .btn-delete {
-            padding: 6px 12px;
+            padding: 8px 16px;
             border: none;
             border-radius: 6px;
             background: rgba(255, 0, 0, 0.3);
@@ -195,18 +320,79 @@
             cursor: pointer;
             font-size: 12px;
             margin-top: 8px;
-            transition: 0.2s;
+            transition: all 0.3s ease;
             border: 1px solid rgba(255, 0, 0, 0.5);
         }
 
         .btn-delete:hover {
             background: rgba(255, 0, 0, 0.5);
+            transform: scale(1.05);
+        }
+        
+        .btn-delete:active {
+            transform: scale(0.95);
         }
 
         .list-item-actions {
             margin-top: 10px;
             display: flex;
             gap: 8px;
+        }
+        
+        /* Toast Notification */
+        .toast {
+            position: fixed;
+            bottom: 20px;
+            right: 20px;
+            background: rgba(0, 0, 0, 0.9);
+            color: #fff;
+            padding: 15px 20px;
+            border-radius: 8px;
+            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.5);
+            z-index: 10000;
+            animation: slideInRight 0.3s ease, slideOutRight 0.3s ease 2.7s;
+            max-width: 300px;
+            border-left: 4px solid #FFD700;
+        }
+        
+        .toast.success {
+            border-left-color: #FFD700;
+        }
+        
+        .toast.error {
+            border-left-color: #FFD700;
+        }
+        
+        @keyframes slideInRight {
+            from {
+                transform: translateX(400px);
+                opacity: 0;
+            }
+            to {
+                transform: translateX(0);
+                opacity: 1;
+            }
+        }
+        
+        @keyframes slideOutRight {
+            from {
+                transform: translateX(0);
+                opacity: 1;
+            }
+            to {
+                transform: translateX(400px);
+                opacity: 0;
+            }
+        }
+        
+        .user-badge {
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            padding: 8px 15px;
+            background: rgba(255, 215, 0, 0.1);
+            border-radius: 20px;
+            border: 1px solid rgba(255, 215, 0, 0.3);
         }
 
         @media (min-width: 768px) {
@@ -217,16 +403,24 @@
             .list-item-details {
                 grid-template-columns: repeat(4, 1fr);
             }
+            
+            .stats-box .stat-value {
+                font-size: 64px;
+            }
         }
     </style>
 </head>
 <body>
 <div class="overlay">
-    <h2>Dashboard Admin</h2>
+    <div class="app-content">
+    <h2>📊 Dashboard Admin</h2>
 
     {% if user_name %}
-    <div style="text-align: center; margin-bottom: 20px; padding: 10px; background: rgba(255, 255, 255, 0.05); border-radius: 8px; font-size: 14px; opacity: 0.8;">
-        Accesso come: <strong>{{ user_name }}</strong>
+    <div style="text-align: center; margin-bottom: 20px; padding: 12px; background: rgba(255, 255, 255, 0.05); border-radius: 8px; font-size: 14px;">
+        <div class="user-badge">
+            <span>👤</span>
+            <span>Accesso come: <strong>{{ user_name }}</strong></span>
+        </div>
     </div>
     {% endif %}
 
@@ -237,7 +431,10 @@
 
     <!-- Sezione Eventi (Storico) -->
     <div class="eventi-section">
-        <h3 style="margin-top: 0;">Storico Eventi</h3>
+        <h3 style="margin-top: 0; display: flex; align-items: center; gap: 10px;">
+            <span>📅</span>
+            <span>Storico Eventi</span>
+        </h3>
         {% if eventi and eventi|length > 0 %}
         {% for evento in eventi %}
         <div class="evento-item {% if evento_corrente and evento[0] == evento_corrente[0] %}active{% endif %}" 
@@ -245,23 +442,26 @@
             <div class="evento-header">
                 <div class="evento-nome">{{ evento[1] }}</div>
                 <div class="evento-badge {% if evento[5] == 0 %}inactive{% endif %}">
-                    {% if evento[5] == 1 %}Attivo{% else %}Chiuso{% endif %}
+                    {% if evento[5] == 1 %}✓ Attivo{% else %}✗ Chiuso{% endif %}
                 </div>
             </div>
             <div class="evento-details">
                 {% if evento[2] %}<div style="margin-bottom: 5px;">{{ evento[2] }}</div>{% endif %}
-                <div style="display: flex; justify-content: space-between; font-size: 12px; opacity: 0.7;">
-                    <span>Prezzo: €{{ "%.2f"|format(evento[3]) }}</span>
-                    <span>Registrati: {{ evento[6] }}</span>
+                <div style="display: flex; justify-content: space-between; font-size: 12px; opacity: 0.7; margin-top: 8px;">
+                    <span>💰 Prezzo: €{{ "%.2f"|format(evento[3]) }}</span>
+                    <span>👥 Registrati: <strong>{{ evento[6] }}</strong></span>
                 </div>
                 <div style="font-size: 11px; opacity: 0.6; margin-top: 5px;">
-                    Creato: {{ evento[4] }}
+                    📆 Creato: {{ evento[4] }}
                 </div>
             </div>
         </div>
         {% endfor %}
         {% else %}
-        <div class="no-results">Nessun evento creato. Crea il primo evento!</div>
+        <div class="no-results">
+            <div style="font-size: 48px; margin-bottom: 10px;">📭</div>
+            Nessun evento creato. Crea il primo evento!
+        </div>
         {% endif %}
     </div>
 
@@ -269,49 +469,59 @@
     {% if evento_corrente %}
     <div class="stats-box">
         <h3 style="margin: 0 0 10px 0; font-size: 14px; opacity: 0.7; text-transform: uppercase; font-weight: 400;">
-            Evento: {{ evento_corrente[1] }}
+            📌 Evento: {{ evento_corrente[1] }}
         </h3>
         <div class="stat-value">{{ totale_iscritti }}</div>
-        <p style="font-size: 12px; opacity: 0.7; margin-top: 5px;">Registrati</p>
+        <p style="font-size: 12px; opacity: 0.7; margin-top: 5px;">👥 Registrati</p>
     </div>
 
     <!-- Lista Registrati con Ricerca -->
     <div class="search-section">
-        <h3>Lista Registrati</h3>
+        <h3 style="display: flex; align-items: center; gap: 10px;">
+            <span>📋</span>
+            <span>Lista Registrati</span>
+        </h3>
         
-        <input type="text" 
-               id="search-input" 
-               class="search-input" 
-               placeholder="Cerca per nome, cognome, telefono...">
+        <div class="search-wrapper">
+            <input type="text" 
+                   id="search-input" 
+                   class="search-input" 
+                   placeholder="🔍 Cerca per nome, cognome, telefono...">
+            <span class="search-icon">🔍</span>
+        </div>
+        <div class="search-count" id="search-count"></div>
         
         <div class="list-view" id="registrati-list">
             {% if registrati|length == 0 %}
-            <div class="no-results">Nessun registrato per questo evento</div>
+            <div class="no-results">
+                <div style="font-size: 48px; margin-bottom: 10px;">📭</div>
+                Nessun registrato per questo evento
+            </div>
             {% else %}
             {% for r in registrati %}
             <div class="list-item" 
                  data-id="{{ r[0] }}"
                  data-nome="{{ r[1]|lower }}" 
                  data-cognome="{{ r[2]|lower }}" 
-                 data-telefono="{{ r[5] }}">
+                 data-telefono="{{ r[3] }}">
                 <div class="list-item-header">
-                    <div class="list-item-name">{{ r[1] }} {{ r[2] }}</div>
+                    <div class="list-item-name">👤 {{ r[1] }} {{ r[2] }}</div>
                 </div>
                 <div class="list-item-details">
                     <div class="list-item-detail">
-                        <span class="list-item-detail-label">Data nascita</span>
+                        <span class="list-item-detail-label">📱 Telefono</span>
                         <span class="list-item-detail-value">{{ r[3] }}</span>
                     </div>
                     <div class="list-item-detail">
-                        <span class="list-item-detail-label">Luogo nascita</span>
+                        <span class="list-item-detail-label">🎂 Fascia d'età</span>
                         <span class="list-item-detail-value">{{ r[4] }}</span>
                     </div>
                     <div class="list-item-detail">
-                        <span class="list-item-detail-label">Telefono</span>
+                        <span class="list-item-detail-label">🕐 Orario arrivo</span>
                         <span class="list-item-detail-value">{{ r[5] }}</span>
                     </div>
                     <div class="list-item-detail">
-                        <span class="list-item-detail-label">Data registrazione</span>
+                        <span class="list-item-detail-label">📅 Registrato il</span>
                         <span class="list-item-detail-value">{{ r[6] }}</span>
                     </div>
                 </div>
@@ -327,19 +537,44 @@
     </div>
     {% else %}
     <div class="no-results" style="margin-top: 20px;">
+        <div style="font-size: 48px; margin-bottom: 10px;">📭</div>
         Nessun evento attivo. Crea un nuovo evento per iniziare!
     </div>
     {% endif %}
 
     <div class="logout-link">
-        <a href="/admin/logout">Logout</a>
+        <a href="/admin/logout">🚪 Logout</a>
     </div>
 </div>
+
+<!-- Toast Container -->
+<div id="toast-container"></div>
+
 <script>
-// Elimina registrazione
+// Toast Notification System
+function showToast(message, type = 'info') {
+    const toast = document.createElement('div');
+    toast.className = `toast ${type}`;
+    toast.textContent = message;
+    
+    const container = document.getElementById('toast-container');
+    container.appendChild(toast);
+    
+    setTimeout(() => {
+        toast.remove();
+    }, 3000);
+}
+
+// Elimina registrazione con feedback migliorato
 async function deleteRegistrazione(personaId, nomeCompleto) {
-    if (!confirm(`Sei sicuro di voler eliminare la registrazione di "${nomeCompleto}"?\n\nQuesta azione non può essere annullata!`)) {
+    if (!confirm(`⚠️ Sei sicuro di voler eliminare la registrazione di "${nomeCompleto}"?\n\nQuesta azione non può essere annullata!`)) {
         return;
+    }
+    
+    const item = document.querySelector(`.list-item[data-id="${personaId}"]`);
+    if (item) {
+        item.style.opacity = '0.5';
+        item.style.pointerEvents = 'none';
     }
     
     try {
@@ -354,36 +589,79 @@ async function deleteRegistrazione(personaId, nomeCompleto) {
         const data = await response.json();
         
         if (data.ok) {
-            alert(data.message);
-            window.location.reload();
+            showToast(`✅ ${data.message}`, 'success');
+            if (item) {
+                item.style.transition = 'all 0.3s ease';
+                item.style.transform = 'translateX(-100%)';
+                item.style.opacity = '0';
+                setTimeout(() => {
+                    item.remove();
+                    updateSearchCount();
+                    // Ricarica dopo 1 secondo
+                    setTimeout(() => window.location.reload(), 1000);
+                }, 300);
+            } else {
+                setTimeout(() => window.location.reload(), 1000);
+            }
         } else {
-            alert('Errore: ' + (data.error || 'Impossibile eliminare la registrazione'));
+            showToast(`❌ Errore: ${data.error || 'Impossibile eliminare la registrazione'}`, 'error');
+            if (item) {
+                item.style.opacity = '1';
+                item.style.pointerEvents = 'auto';
+            }
         }
     } catch (error) {
-        alert('Errore di connessione');
+        showToast('❌ Errore di connessione', 'error');
+        if (item) {
+            item.style.opacity = '1';
+            item.style.pointerEvents = 'auto';
+        }
     }
 }
 
-// Ricerca lato client
+// Ricerca migliorata con contatore
 const searchInput = document.getElementById('search-input');
 if (searchInput) {
+    function updateSearchCount() {
+        const query = searchInput.value.toLowerCase().trim();
+        const items = document.querySelectorAll('.list-item');
+        let visibleCount = 0;
+        
+        items.forEach(item => {
+            if (item.style.display !== 'none') {
+                visibleCount++;
+            }
+        });
+        
+        const countEl = document.getElementById('search-count');
+        if (query) {
+            countEl.textContent = `Trovati: ${visibleCount} di ${items.length} registrati`;
+        } else {
+            countEl.textContent = `Totale: ${items.length} registrati`;
+        }
+    }
+    
     searchInput.addEventListener('input', function(e) {
         const query = e.target.value.toLowerCase().trim();
         const items = document.querySelectorAll('.list-item');
         let visibleCount = 0;
         
-        items.forEach(item => {
+        items.forEach((item, index) => {
             const nome = item.getAttribute('data-nome') || '';
             const cognome = item.getAttribute('data-cognome') || '';
             const telefono = item.getAttribute('data-telefono') || '';
+            // Cerca anche nella fascia d'età e orario (testo visibile)
+            const itemText = item.textContent.toLowerCase();
             
             const matches = !query || 
                 nome.includes(query) || 
                 cognome.includes(query) || 
-                telefono.includes(query);
+                telefono.includes(query) ||
+                itemText.includes(query);
             
             if (matches) {
                 item.style.display = 'block';
+                item.style.animationDelay = `${index * 0.05}s`;
                 visibleCount++;
             } else {
                 item.style.display = 'none';
@@ -397,14 +675,29 @@ if (searchInput) {
                 noResults = document.createElement('div');
                 noResults.id = 'no-results-msg';
                 noResults.className = 'no-results';
-                noResults.textContent = 'Nessun risultato trovato';
+                noResults.innerHTML = '<div style="font-size: 48px; margin-bottom: 10px;">🔍</div>Nessun risultato trovato';
                 document.getElementById('registrati-list').appendChild(noResults);
             }
         } else if (noResults) {
             noResults.remove();
         }
+        
+        updateSearchCount();
     });
+    
+    // Inizializza contatore
+    updateSearchCount();
 }
+
+// Animazione al caricamento
+document.addEventListener('DOMContentLoaded', function() {
+    const items = document.querySelectorAll('.list-item, .evento-item');
+    items.forEach((item, index) => {
+        item.style.animationDelay = `${index * 0.1}s`;
+    });
+});
 </script>
+    </div>
+</div>
 </body>
 </html>

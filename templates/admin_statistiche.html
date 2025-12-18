@@ -1,0 +1,356 @@
+<!DOCTYPE html>
+<html lang="it">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
+    <meta name="theme-color" content="#FFD700">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+    <meta name="apple-mobile-web-app-title" content="SAMU Admin">
+    <link rel="manifest" href="/manifest.json">
+    <link rel="apple-touch-icon" href="/static/icon.png">
+    <title>Statistiche - Admin</title>
+    <link rel="stylesheet" href="/static/style.css">
+    <link rel="stylesheet" href="/static/admin.css">
+    <link rel="stylesheet" href="/static/ux-enhancements.css">
+    <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js"></script>
+    <style>
+        .chart-container {
+            background: rgba(255,255,255,0.08);
+            border-radius: 12px;
+            padding: 20px;
+            margin-bottom: 20px;
+            position: relative;
+            height: 300px;
+        }
+        
+        .chart-title {
+            font-size: 16px;
+            font-weight: 600;
+            margin-bottom: 15px;
+            text-align: center;
+        }
+        
+        .stats-summary {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 15px;
+            margin-bottom: 25px;
+        }
+    </style>
+</head>
+<body>
+<div class="overlay">
+    <div class="app-content">
+    <h2>📊 Statistiche</h2>
+
+    {% if user_name %}
+    <div class="user-badge">
+        <span>👤</span>
+        <span>{{ user_name }}</span>
+    </div>
+    {% endif %}
+
+    <!-- Grafico Fascia d'Età -->
+    {% if eta_stats|length > 0 %}
+    <div class="chart-container">
+        <div class="chart-title">Distribuzione per Fascia d'Età</div>
+        <canvas id="etaChart"></canvas>
+    </div>
+    {% endif %}
+
+    <!-- Grafico Orari di Arrivo -->
+    {% if orario_stats|length > 0 %}
+    <div class="chart-container">
+        <div class="chart-title">Distribuzione Orari di Arrivo</div>
+        <canvas id="orarioChart"></canvas>
+    </div>
+    {% endif %}
+
+    <!-- Grafico Registrazioni per Evento -->
+    {% if evento_stats|length > 0 %}
+    <div class="chart-container">
+        <div class="chart-title">Registrazioni per Evento</div>
+        <canvas id="eventoChart"></canvas>
+    </div>
+    {% endif %}
+
+    <!-- Grafico Andamento Giornaliero -->
+    {% if giornaliere_stats|length > 0 %}
+    <div class="chart-container">
+        <div class="chart-title">Andamento Ultimi 7 Giorni</div>
+        <canvas id="giornaliereChart"></canvas>
+    </div>
+    {% endif %}
+
+    {% if eta_stats|length == 0 and orario_stats|length == 0 %}
+    <div class="no-results">
+        <div style="font-size: 48px; margin-bottom: 10px;">📊</div>
+        Nessun dato disponibile
+    </div>
+    {% endif %}
+    </div>
+</div>
+
+<!-- Bottom Navigation Bar -->
+<div class="bottom-nav">
+    <a href="/admin/dashboard" class="nav-item">
+        <span class="nav-icon">🏠</span>
+        <span class="nav-label">Dashboard</span>
+    </a>
+    <a href="/admin/statistiche" class="nav-item active">
+        <span class="nav-icon">📊</span>
+        <span class="nav-label">Statistiche</span>
+    </a>
+    <a href="/admin/evento/crea" class="nav-item">
+        <span class="nav-icon">➕</span>
+        <span class="nav-label">Nuovo</span>
+    </a>
+    <a href="/admin/eventi" class="nav-item">
+        <span class="nav-icon">📅</span>
+        <span class="nav-label">Eventi</span>
+    </a>
+</div>
+
+<script>
+// Configurazione colori
+const colors = {
+    primary: '#FFD700',
+    secondary: '#FFA500',
+    success: '#FFD700',
+    accent: '#DAA520'
+};
+
+// Grafico Fascia d'Età
+{% if eta_stats|length > 0 %}
+const etaCtx = document.getElementById('etaChart').getContext('2d');
+new Chart(etaCtx, {
+    type: 'doughnut',
+    data: {
+        labels: [{% for stat in eta_stats %}'{{ stat[0] }}'{% if not loop.last %},{% endif %}{% endfor %}],
+        datasets: [{
+            data: [{% for stat in eta_stats %}{{ stat[1] }}{% if not loop.last %},{% endif %}{% endfor %}],
+            backgroundColor: [
+                'rgba(255, 215, 0, 0.8)',
+                'rgba(255, 165, 0, 0.8)',
+                'rgba(218, 165, 32, 0.8)',
+                'rgba(184, 134, 11, 0.8)',
+                'rgba(255, 193, 7, 0.8)'
+            ],
+            borderColor: '#FFD700',
+            borderWidth: 2
+        }]
+    },
+    options: {
+        responsive: true,
+        maintainAspectRatio: false,
+        plugins: {
+            legend: {
+                position: 'bottom',
+                labels: {
+                    color: '#fff',
+                    padding: 15
+                }
+            }
+        }
+    }
+});
+{% endif %}
+
+// Grafico Orari
+{% if orario_stats|length > 0 %}
+const orarioCtx = document.getElementById('orarioChart').getContext('2d');
+new Chart(orarioCtx, {
+    type: 'bar',
+    data: {
+        labels: [{% for stat in orario_stats %}'{{ stat[0] }}:00'{% if not loop.last %},{% endif %}{% endfor %}],
+        datasets: [{
+            label: 'Registrazioni',
+            data: [{% for stat in orario_stats %}{{ stat[1] }}{% if not loop.last %},{% endif %}{% endfor %}],
+            backgroundColor: 'rgba(255, 215, 0, 0.6)',
+            borderColor: '#FFD700',
+            borderWidth: 2
+        }]
+    },
+    options: {
+        responsive: true,
+        maintainAspectRatio: false,
+        plugins: {
+            legend: {
+                display: false
+            }
+        },
+        scales: {
+            y: {
+                beginAtZero: true,
+                ticks: {
+                    color: '#fff'
+                },
+                grid: {
+                    color: 'rgba(255, 255, 255, 0.1)'
+                }
+            },
+            x: {
+                ticks: {
+                    color: '#fff'
+                },
+                grid: {
+                    color: 'rgba(255, 255, 255, 0.1)'
+                }
+            }
+        }
+    }
+});
+{% endif %}
+
+// Grafico Eventi
+{% if evento_stats|length > 0 %}
+const eventoCtx = document.getElementById('eventoChart').getContext('2d');
+new Chart(eventoCtx, {
+    type: 'bar',
+    data: {
+        labels: [{% for stat in evento_stats %}'{{ stat[0][:20] }}{% if stat[0]|length > 20 %}...{% endif %}'{% if not loop.last %},{% endif %}{% endfor %}],
+        datasets: [{
+            label: 'Registrazioni',
+            data: [{% for stat in evento_stats %}{{ stat[1] }}{% if not loop.last %},{% endif %}{% endfor %}],
+            backgroundColor: 'rgba(255, 165, 0, 0.6)',
+            borderColor: '#FFA500',
+            borderWidth: 2
+        }]
+    },
+    options: {
+        responsive: true,
+        maintainAspectRatio: false,
+        indexAxis: 'y',
+        plugins: {
+            legend: {
+                display: false
+            }
+        },
+        scales: {
+            y: {
+                ticks: {
+                    color: '#fff'
+                },
+                grid: {
+                    color: 'rgba(255, 255, 255, 0.1)'
+                }
+            },
+            x: {
+                beginAtZero: true,
+                ticks: {
+                    color: '#fff'
+                },
+                grid: {
+                    color: 'rgba(255, 255, 255, 0.1)'
+                }
+            }
+        }
+    }
+});
+{% endif %}
+
+// Grafico Giornaliero
+{% if giornaliere_stats|length > 0 %}
+const giornaliereCtx = document.getElementById('giornaliereChart').getContext('2d');
+new Chart(giornaliereCtx, {
+    type: 'line',
+    data: {
+        labels: [{% for stat in giornaliere_stats %}'{{ stat[0] }}'{% if not loop.last %},{% endif %}{% endfor %}],
+        datasets: [{
+            label: 'Registrazioni',
+            data: [{% for stat in giornaliere_stats %}{{ stat[1] }}{% if not loop.last %},{% endif %}{% endfor %}],
+            borderColor: '#FFD700',
+            backgroundColor: 'rgba(255, 215, 0, 0.1)',
+            borderWidth: 3,
+            fill: true,
+            tension: 0.4
+        }]
+    },
+    options: {
+        responsive: true,
+        maintainAspectRatio: false,
+        plugins: {
+            legend: {
+                labels: {
+                    color: '#fff'
+                }
+            }
+        },
+        scales: {
+            y: {
+                beginAtZero: true,
+                ticks: {
+                    color: '#fff'
+                },
+                grid: {
+                    color: 'rgba(255, 255, 255, 0.1)'
+                }
+            },
+            x: {
+                ticks: {
+                    color: '#fff'
+                },
+                grid: {
+                    color: 'rgba(255, 255, 255, 0.1)'
+                }
+            }
+        }
+    }
+});
+{% endif %}
+
+// Page transition
+document.body.classList.add('page-transition');
+
+// Smooth chart animations
+document.addEventListener('DOMContentLoaded', function() {
+    const charts = document.querySelectorAll('canvas');
+    charts.forEach((chart, index) => {
+        chart.style.opacity = '0';
+        chart.style.transition = 'opacity 0.5s ease';
+        setTimeout(() => {
+            chart.style.opacity = '1';
+        }, index * 200);
+    });
+});
+
+// Enhanced Toast System
+function showToast(message, type = 'info', duration = 3000) {
+    const container = document.getElementById('toast-container');
+    if (!container) {
+        const newContainer = document.createElement('div');
+        newContainer.id = 'toast-container';
+        document.body.appendChild(newContainer);
+    }
+    
+    const toast = document.createElement('div');
+    toast.className = `toast ${type}`;
+    
+    const icons = {
+        success: '✅',
+        error: '❌',
+        info: 'ℹ️',
+        warning: '⚠️'
+    };
+    
+    toast.innerHTML = `
+        <span class="toast-icon">${icons[type] || icons.info}</span>
+        <span class="toast-message">${message}</span>
+    `;
+    
+    document.getElementById('toast-container').appendChild(toast);
+    
+    if ('vibrate' in navigator) {
+        navigator.vibrate(type === 'success' ? [10, 50, 10] : [20, 50, 20]);
+    }
+    
+    setTimeout(() => {
+        toast.style.animation = 'toastSlideIn 0.3s ease reverse';
+        setTimeout(() => toast.remove(), 300);
+    }, duration);
+}
+</script>
+</body>
+</html>
+

@@ -108,10 +108,23 @@ def init_db():
             nome TEXT NOT NULL,
             descrizione TEXT,
             prezzo REAL DEFAULT 0.0,
+            data_evento DATE NOT NULL,
             data_creazione TEXT DEFAULT CURRENT_TIMESTAMP,
             attivo INTEGER DEFAULT 1
         )
     """)
+    
+    # Migrazione: aggiungi/modifica data_evento se necessario
+    try:
+        c.execute("PRAGMA table_info(eventi)")
+        columns = [row[1] for row in c.fetchall()]
+        if 'data_evento' not in columns:
+            c.execute("ALTER TABLE eventi ADD COLUMN data_evento DATE")
+            conn.commit()
+        # Nota: SQLite non supporta ALTER COLUMN per cambiare tipo,
+        # ma DATE è semanticamente corretto anche se internamente è TEXT
+    except sqlite3.OperationalError:
+        pass
     
     # Tabella registrazioni con riferimento a evento
     c.execute("""
@@ -120,10 +133,10 @@ def init_db():
             evento_id INTEGER NOT NULL,
             nome TEXT NOT NULL,
             cognome TEXT NOT NULL,
-            data_nascita TEXT NOT NULL,
-            luogo_nascita TEXT NOT NULL,
             telefono TEXT NOT NULL,
-            data_registrazione TEXT DEFAULT CURRENT_TIMESTAMP,
+            eta_fascia TEXT NOT NULL CHECK(eta_fascia IN ('>18', '18-21', '21-25', '25-30', '30+')),
+            orario_arrivo TEXT NOT NULL,
+            created_at TEXT DEFAULT CURRENT_TIMESTAMP,
             FOREIGN KEY (evento_id) REFERENCES eventi(id)
         )
     """)
@@ -138,14 +151,28 @@ def init_db():
     except sqlite3.OperationalError:
         pass
     
-    # Aggiungi colonna evento_id se non esiste (migrazione)
+    # Migrazione: aggiorna struttura tabella registrazioni se necessario
     try:
         c.execute("PRAGMA table_info(registrazioni)")
         columns = [row[1] for row in c.fetchall()]
+        
+        # Se la tabella esiste con vecchia struttura, aggiungi/modifica colonne
+        if 'data_nascita' in columns or 'luogo_nascita' in columns:
+            # Tabella vecchia - aggiungi nuove colonne se non esistono
+            if 'eta_fascia' not in columns:
+                c.execute("ALTER TABLE registrazioni ADD COLUMN eta_fascia TEXT")
+            if 'orario_arrivo' not in columns:
+                c.execute("ALTER TABLE registrazioni ADD COLUMN orario_arrivo TEXT")
+            if 'created_at' not in columns:
+                c.execute("ALTER TABLE registrazioni ADD COLUMN created_at TEXT DEFAULT CURRENT_TIMESTAMP")
+            conn.commit()
+        
+        # Aggiungi evento_id se non esiste
         if 'evento_id' not in columns:
             c.execute("ALTER TABLE registrazioni ADD COLUMN evento_id INTEGER DEFAULT 1")
             conn.commit()
-    except sqlite3.OperationalError:
+    except sqlite3.OperationalError as e:
+        print(f"Errore migrazione: {e}")
         pass
     
     conn.close()
@@ -157,63 +184,62 @@ init_db()
 # ---------------------------
 @app.route("/", methods=["GET", "POST"])
 def register():
-    # Carica eventi attivi per la selezione
+    # Carica l'evento attivo (solo uno può essere attivo)
     conn = get_db_connection()
     c = conn.cursor()
-    c.execute("SELECT id, nome, descrizione, prezzo FROM eventi WHERE attivo = 1 ORDER BY data_creazione DESC")
-    eventi = c.fetchall()
+    c.execute("SELECT id, nome, descrizione, prezzo FROM eventi WHERE attivo = 1 ORDER BY data_creazione DESC LIMIT 1")
+    evento_attivo = c.fetchone()
     conn.close()
     
     if request.method == "POST":
         # Validazione input
-        evento_id = request.form.get("evento_id", "").strip()
         nome = request.form.get("nome", "").strip()
         cognome = request.form.get("cognome", "").strip()
-        data_nascita = request.form.get("data_nascita", "").strip()
-        luogo_nascita = request.form.get("luogo_nascita", "").strip()
         telefono = request.form.get("telefono", "").strip()
+        eta_fascia = request.form.get("eta_fascia", "").strip()
+        orario_arrivo = request.form.get("orario_arrivo", "").strip()
         
-        # Validazione evento
-        if not evento_id:
-            return render_template("register.html", eventi=eventi, error="Seleziona un evento.")
-        try:
-            evento_id = int(evento_id)
-        except ValueError:
-            return render_template("register.html", eventi=eventi, error="Evento non valido.")
+        # Verifica che ci sia un evento attivo
+        if not evento_attivo:
+            return render_template("register.html", evento=None, error="Nessun evento disponibile al momento.")
+        
+        evento_id = evento_attivo[0]
         
         # Validazione campi obbligatori
         if not nome or len(nome) > 100:
-            return render_template("register.html", eventi=eventi, error="Nome non valido (max 100 caratteri).")
+            return render_template("register.html", evento=evento_attivo, error="Nome obbligatorio (max 100 caratteri).")
         if not cognome or len(cognome) > 100:
-            return render_template("register.html", eventi=eventi, error="Cognome non valido (max 100 caratteri).")
-        if not data_nascita:
-            return render_template("register.html", eventi=eventi, error="Data di nascita obbligatoria.")
-        if not luogo_nascita or len(luogo_nascita) > 100:
-            return render_template("register.html", eventi=eventi, error="Luogo di nascita non valido (max 100 caratteri).")
+            return render_template("register.html", evento=evento_attivo, error="Cognome obbligatorio (max 100 caratteri).")
         if not telefono:
-            return render_template("register.html", eventi=eventi, error="Numero di telefono obbligatorio.")
-
-        # Validazione età minima (12 anni)
-        try:
-            data_nascita_obj = datetime.strptime(data_nascita, "%Y-%m-%d")
-            oggi = now_italia()
-            eta = (oggi.date() - data_nascita_obj.date()).days // 365
-            if eta < 12:
-                return render_template("register.html", eventi=eventi,
-                                     error=f"Devi avere almeno 12 anni per registrarti. Età attuale: {eta} anni.")
-        except ValueError:
-            return render_template("register.html", eventi=eventi,
-                                 error="Data di nascita non valida.")
+            return render_template("register.html", evento=evento_attivo, error="Numero di telefono obbligatorio.")
+        if not eta_fascia or eta_fascia not in ['>18', '18-21', '21-25', '25-30', '30+']:
+            return render_template("register.html", evento=evento_attivo, error="Fascia d'età obbligatoria.")
+        if not orario_arrivo:
+            return render_template("register.html", evento=evento_attivo, error="Orario di arrivo obbligatorio.")
 
         # Validazione telefono: deve iniziare con 3
         telefono_pulito = ''.join(filter(str.isdigit, telefono))
         if not telefono_pulito.startswith('3'):
-            return render_template("register.html", eventi=eventi,
+            return render_template("register.html", evento=evento_attivo,
                                  error="Il numero di telefono deve iniziare con 3.")
         if len(telefono_pulito) < 9 or len(telefono_pulito) > 15:
-            return render_template("register.html", eventi=eventi,
+            return render_template("register.html", evento=evento_attivo,
                                  error="Il numero di telefono deve avere tra 9 e 15 cifre.")
         telefono = telefono_pulito
+
+        # Validazione orario
+        try:
+            # Verifica formato HH:MM
+            parts = orario_arrivo.split(':')
+            if len(parts) != 2:
+                raise ValueError
+            hour = int(parts[0])
+            minute = int(parts[1])
+            if hour < 0 or hour > 23 or minute < 0 or minute > 59:
+                raise ValueError
+        except (ValueError, IndexError):
+            return render_template("register.html", evento=evento_attivo,
+                                 error="Orario non valido. Usa il formato HH:MM (es. 14:30).")
 
         conn = None
         try:
@@ -223,37 +249,48 @@ def register():
             # Verifica che l'evento esista e sia attivo
             c.execute("SELECT id FROM eventi WHERE id = ? AND attivo = 1", (evento_id,))
             if not c.fetchone():
-                return render_template("register.html", eventi=eventi,
+                return render_template("register.html", evento=evento_attivo,
                                      error="Evento non valido o non più disponibile.")
             
             # Controlla se il telefono è già registrato per questo evento
-            c.execute("SELECT COUNT(*) FROM registrazioni WHERE telefono = ? AND evento_id = ?", (telefono, evento_id))
-            if c.fetchone()[0] > 0:
-                return render_template("register.html", eventi=eventi,
+            # Normalizza il telefono per il controllo (rimuovi spazi, trattini, etc.)
+            # Confronta sia il telefono normalizzato che quello originale
+            c.execute("""
+                SELECT COUNT(*) FROM registrazioni 
+                WHERE (
+                    telefono = ? OR 
+                    REPLACE(REPLACE(REPLACE(REPLACE(REPLACE(telefono, ' ', ''), '-', ''), '.', ''), '(', ''), ')', '') = ?
+                )
+                AND evento_id = ?
+            """, (telefono_pulito, telefono_pulito, evento_id))
+            count = c.fetchone()[0]
+            if count > 0:
+                return render_template("register.html", evento=evento_attivo,
                                      error="Sei già registrato per questo evento.")
             
-            # Inserisci la registrazione
-            data_registrazione = now_italia().strftime("%Y-%m-%d %H:%M:%S")
+            # Inserisci la registrazione (usa telefono_pulito normalizzato)
+            created_at = now_italia().strftime("%Y-%m-%d %H:%M:%S")
             c.execute("""
-                INSERT INTO registrazioni (evento_id, nome, cognome, data_nascita, luogo_nascita, telefono, data_registrazione)
+                INSERT INTO registrazioni (evento_id, nome, cognome, telefono, eta_fascia, orario_arrivo, created_at)
                 VALUES (?, ?, ?, ?, ?, ?, ?)
-            """, (evento_id, nome, cognome, data_nascita, luogo_nascita, telefono, data_registrazione))
+            """, (evento_id, nome, cognome, telefono_pulito, eta_fascia, orario_arrivo, created_at))
             conn.commit()
             
-            return render_template("register.html", eventi=eventi,
+            return render_template("register.html", evento=evento_attivo,
                                  success="Registrazione completata con successo!")
-        except sqlite3.IntegrityError:
-            return render_template("register.html", eventi=eventi,
+        except sqlite3.IntegrityError as e:
+            print(f"IntegrityError: {e}")
+            return render_template("register.html", evento=evento_attivo,
                                  error="Sei già registrato per questo evento.")
         except Exception as e:
             print(f"Errore durante la registrazione: {e}")
-            return render_template("register.html", eventi=eventi,
+            return render_template("register.html", evento=evento_attivo,
                                  error="Si è verificato un errore durante la registrazione. Riprova.")
         finally:
             if conn:
                 conn.close()
 
-    return render_template("register.html", eventi=eventi)
+    return render_template("register.html", evento=evento_attivo)
 
 # ---------------------------
 # ROUTE: LOGIN ADMIN
@@ -290,7 +327,7 @@ def admin_login():
             session["username"] = username_found
             session["user_role"] = USERS[username_found]["role"]
             session["user_name"] = USERS[username_found]["name"]
-            return redirect(url_for("admin"))
+            return redirect(url_for("admin_dashboard"))
         else:
             record_failed_login(ip_address)
             return render_template("admin_login.html", error="Username o password errati")
@@ -309,10 +346,11 @@ def admin_logout():
     return redirect(url_for("admin_login"))
 
 # ---------------------------
-# ROUTE: ADMIN - LISTA EVENTI E REGISTRATI
+# ROUTE: ADMIN - DASHBOARD
 # ---------------------------
 @app.route("/admin")
-def admin():
+@app.route("/admin/dashboard")
+def admin_dashboard():
     if not session.get("user_logged_in"):
         return redirect(url_for("admin_login"))
     
@@ -320,70 +358,235 @@ def admin():
     if user_role != "admin":
         return redirect(url_for("admin_login"))
     
-    # Filtro evento dalla query string
-    evento_id = request.args.get("evento_id", None)
-    
     conn = None
     try:
         conn = get_db_connection()
         c = conn.cursor()
         
-        # Lista tutti gli eventi (storico)
+        # Prossimo evento (attivo)
         c.execute("""
-            SELECT id, nome, descrizione, prezzo, data_creazione, attivo,
+            SELECT id, nome, descrizione, prezzo, data_evento, data_creazione,
                    (SELECT COUNT(*) FROM registrazioni WHERE registrazioni.evento_id = eventi.id) as num_registrati
             FROM eventi 
-            ORDER BY data_creazione DESC
+            WHERE attivo = 1 
+            ORDER BY data_evento ASC
+            LIMIT 1
         """)
-        eventi = c.fetchall()
+        prossimo_evento = c.fetchone()
         
-        # Seleziona evento attivo o quello specificato
-        evento_corrente = None
-        if evento_id:
-            try:
-                evento_id = int(evento_id)
-                c.execute("SELECT id, nome, descrizione, prezzo FROM eventi WHERE id = ?", (evento_id,))
-                evento_corrente = c.fetchone()
-            except ValueError:
-                pass
+        # Statistiche generali
+        c.execute("SELECT COUNT(*) FROM eventi")
+        totale_eventi = c.fetchone()[0]
         
-        if not evento_corrente:
-            # Prendi l'evento attivo più recente
-            c.execute("SELECT id, nome, descrizione, prezzo FROM eventi WHERE attivo = 1 ORDER BY data_creazione DESC LIMIT 1")
-            evento_corrente = c.fetchone()
+        c.execute("SELECT COUNT(*) FROM registrazioni")
+        totale_registrazioni = c.fetchone()[0]
         
-        registrati = []
-        totale_iscritti = 0
+        # Ultimi 5 eventi per preview
+        c.execute("""
+            SELECT id, nome, data_evento, attivo,
+                   (SELECT COUNT(*) FROM registrazioni WHERE registrazioni.evento_id = eventi.id) as num_registrati
+            FROM eventi 
+            ORDER BY data_evento DESC
+            LIMIT 5
+        """)
+        ultimi_eventi = c.fetchall()
         
-        if evento_corrente:
-            evento_id = evento_corrente[0]
-            # Conta registrati per questo evento
-            c.execute("SELECT COUNT(*) FROM registrazioni WHERE evento_id = ?", (evento_id,))
-            totale_iscritti = c.fetchone()[0]
-            
-            # Lista registrati per questo evento
-            c.execute("""
-                SELECT r.id, r.nome, r.cognome, r.data_nascita, r.luogo_nascita, r.telefono, r.data_registrazione 
-                FROM registrazioni r
-                WHERE r.evento_id = ?
-                ORDER BY r.cognome, r.nome
-            """, (evento_id,))
-        registrati = c.fetchall()
     except Exception as e:
-        print(f"Errore durante il caricamento dati admin: {e}")
-        eventi = []
-        evento_corrente = None
-        totale_iscritti = 0
-        registrati = []
+        print(f"Errore durante il caricamento dashboard: {e}")
+        prossimo_evento = None
+        totale_eventi = 0
+        totale_registrazioni = 0
+        ultimi_eventi = []
     finally:
         if conn:
             conn.close()
 
     user_name = session.get("user_name", "Admin")
     
-    return render_template("admin.html", 
+    return render_template("admin_dashboard.html", 
+                         prossimo_evento=prossimo_evento,
+                         totale_eventi=totale_eventi,
+                         totale_registrazioni=totale_registrazioni,
+                         ultimi_eventi=ultimi_eventi,
+                         user_name=user_name)
+
+# ---------------------------
+# ROUTE: ADMIN - STATISTICHE
+# ---------------------------
+@app.route("/admin/statistiche")
+def admin_statistiche():
+    if not session.get("user_logged_in"):
+        return redirect(url_for("admin_login"))
+    
+    user_role = session.get("user_role")
+    if user_role != "admin":
+        return redirect(url_for("admin_login"))
+    
+    conn = None
+    try:
+        conn = get_db_connection()
+        c = conn.cursor()
+        
+        # Statistiche per fascia d'età
+        c.execute("""
+            SELECT eta_fascia, COUNT(*) as count
+            FROM registrazioni
+            GROUP BY eta_fascia
+            ORDER BY 
+                CASE eta_fascia
+                    WHEN '>18' THEN 1
+                    WHEN '18-21' THEN 2
+                    WHEN '21-25' THEN 3
+                    WHEN '25-30' THEN 4
+                    WHEN '30+' THEN 5
+                END
+        """)
+        eta_stats = c.fetchall()
+        
+        # Statistiche per orario di arrivo (raggruppate per ora)
+        c.execute("""
+            SELECT substr(orario_arrivo, 1, 2) as ora, COUNT(*) as count
+            FROM registrazioni
+            GROUP BY ora
+            ORDER BY ora
+        """)
+        orario_stats = c.fetchall()
+        
+        # Registrazioni per evento
+        c.execute("""
+            SELECT e.nome, COUNT(r.id) as count
+            FROM eventi e
+            LEFT JOIN registrazioni r ON e.id = r.evento_id
+            GROUP BY e.id, e.nome
+            ORDER BY e.data_evento DESC
+        """)
+        evento_stats = c.fetchall()
+        
+        # Registrazioni per giorno (ultimi 7 giorni)
+        c.execute("""
+            SELECT date(created_at) as giorno, COUNT(*) as count
+            FROM registrazioni
+            WHERE date(created_at) >= date('now', '-7 days')
+            GROUP BY giorno
+            ORDER BY giorno
+        """)
+        giornaliere_stats = c.fetchall()
+        
+    except Exception as e:
+        print(f"Errore durante il caricamento statistiche: {e}")
+        eta_stats = []
+        orario_stats = []
+        evento_stats = []
+        giornaliere_stats = []
+    finally:
+        if conn:
+            conn.close()
+
+    user_name = session.get("user_name", "Admin")
+    
+    return render_template("admin_statistiche.html",
+                         eta_stats=eta_stats,
+                         orario_stats=orario_stats,
+                         evento_stats=evento_stats,
+                         giornaliere_stats=giornaliere_stats,
+                         user_name=user_name)
+
+# ---------------------------
+# ROUTE: ADMIN - LISTA EVENTI PASSATI
+# ---------------------------
+@app.route("/admin/eventi")
+def admin_eventi():
+    if not session.get("user_logged_in"):
+        return redirect(url_for("admin_login"))
+    
+    user_role = session.get("user_role")
+    if user_role != "admin":
+        return redirect(url_for("admin_login"))
+    
+    conn = None
+    try:
+        conn = get_db_connection()
+        c = conn.cursor()
+        
+        # Lista tutti gli eventi ordinati per data evento
+        c.execute("""
+            SELECT id, nome, descrizione, prezzo, data_evento, data_creazione, attivo,
+                   (SELECT COUNT(*) FROM registrazioni WHERE registrazioni.evento_id = eventi.id) as num_registrati
+            FROM eventi 
+            ORDER BY data_evento DESC, data_creazione DESC
+        """)
+        eventi = c.fetchall()
+        
+    except Exception as e:
+        print(f"Errore durante il caricamento eventi: {e}")
+        eventi = []
+    finally:
+        if conn:
+            conn.close()
+
+    user_name = session.get("user_name", "Admin")
+    
+    return render_template("admin_eventi.html",
                          eventi=eventi,
-                         evento_corrente=evento_corrente,
+                         user_name=user_name)
+
+# ---------------------------
+# ROUTE: ADMIN - DETTAGLIO EVENTO
+# ---------------------------
+@app.route("/admin/evento/<int:evento_id>")
+def admin_evento_dettaglio(evento_id):
+    if not session.get("user_logged_in"):
+        return redirect(url_for("admin_login"))
+    
+    user_role = session.get("user_role")
+    if user_role != "admin":
+        return redirect(url_for("admin_login"))
+    
+    conn = None
+    try:
+        conn = get_db_connection()
+        c = conn.cursor()
+        
+        # Dettagli evento
+        c.execute("""
+            SELECT id, nome, descrizione, prezzo, data_evento, data_creazione, attivo
+            FROM eventi 
+            WHERE id = ?
+        """, (evento_id,))
+        evento = c.fetchone()
+        
+        if not evento:
+            return redirect(url_for("admin_eventi"))
+        
+        # Conta registrati
+        c.execute("SELECT COUNT(*) FROM registrazioni WHERE evento_id = ?", (evento_id,))
+        totale_iscritti = c.fetchone()[0]
+        
+        # Lista registrati per questo evento
+        c.execute("""
+            SELECT r.id, r.nome, r.cognome, r.telefono, r.eta_fascia, r.orario_arrivo, r.created_at 
+            FROM registrazioni r
+            WHERE r.evento_id = ?
+            ORDER BY r.cognome, r.nome
+        """, (evento_id,))
+        registrati = c.fetchall()
+        
+    except Exception as e:
+        print(f"Errore durante il caricamento dettaglio evento: {e}")
+        evento = None
+        totale_iscritti = 0
+        registrati = []
+    finally:
+        if conn:
+            conn.close()
+
+    if not evento:
+        return redirect(url_for("admin_eventi"))
+
+    user_name = session.get("user_name", "Admin")
+    
+    return render_template("admin_evento_dettaglio.html",
+                         evento=evento,
                          totale_iscritti=totale_iscritti,
                          registrati=registrati,
                          user_name=user_name)
@@ -415,22 +618,39 @@ def crea_evento():
                 prezzo = 0.0
         except ValueError:
             prezzo = 0.0
-    
+        
         conn = None
         try:
             conn = get_db_connection()
             c = conn.cursor()
-        
             
+            # Validazione data evento
+            data_evento = request.form.get("data_evento", "").strip()
+            if not data_evento:
+                return render_template("crea_evento.html", 
+                                     error="Data evento obbligatoria.")
             
+            try:
+                # Verifica formato data
+                datetime.strptime(data_evento, "%Y-%m-%d")
+            except ValueError:
+                return render_template("crea_evento.html", 
+                                     error="Data evento non valida. Usa il formato YYYY-MM-DD.")
+            
+            # Disattiva tutti gli altri eventi (solo uno può essere attivo)
+            c.execute("UPDATE eventi SET attivo = 0 WHERE attivo = 1")
+            
+            # Crea il nuovo evento come attivo
             data_creazione = now_italia().strftime("%Y-%m-%d %H:%M:%S")
             c.execute("""
-                INSERT INTO eventi (nome, descrizione, prezzo, data_creazione, attivo)
-                VALUES (?, ?, ?, ?, 1)
-            """, (nome, descrizione, prezzo, data_creazione))
+                INSERT INTO eventi (nome, descrizione, prezzo, data_evento, data_creazione, attivo)
+                VALUES (?, ?, ?, ?, ?, 1)
+            """, (nome, descrizione, prezzo, data_evento, data_creazione))
             conn.commit()
             
-            return redirect(url_for("admin"))
+            return redirect(url_for("admin_dashboard"))
+        except Exception as e:
+            print(f"Errore durante la creazione evento: {e}")
             return render_template("crea_evento.html", 
                                  error="Errore durante la creazione dell'evento.")
         finally:

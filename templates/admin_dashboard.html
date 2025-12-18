@@ -1,0 +1,129 @@
+<!DOCTYPE html>
+<html lang="it">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
+    <meta name="theme-color" content="#FFD700">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+    <meta name="apple-mobile-web-app-title" content="SAMU Admin">
+    <link rel="manifest" href="/manifest.json">
+    <link rel="apple-touch-icon" href="/static/icon.png">
+    <title>Dashboard - Admin</title>
+    <link rel="stylesheet" href="/static/style.css">
+    <link rel="stylesheet" href="/static/admin.css">
+    <link rel="stylesheet" href="/static/ux-enhancements.css">
+</head>
+<body>
+<div class="overlay">
+    <div class="app-content">
+    <h2>📊 Dashboard</h2>
+
+    {% if user_name %}
+    <div class="user-badge">
+        <span>👤</span>
+        <span>{{ user_name }}</span>
+    </div>
+    {% endif %}
+
+    <!-- Prossimo Evento -->
+    {% if prossimo_evento %}
+    <div class="prossimo-evento-card">
+        <div class="card-header">
+            <h3>📅 Prossimo Evento</h3>
+            <span class="badge-active">Attivo</span>
+        </div>
+        <div class="evento-nome-large">{{ prossimo_evento[1] }}</div>
+        {% if prossimo_evento[2] %}
+        <div class="evento-desc">{{ prossimo_evento[2] }}</div>
+        {% endif %}
+        <div class="evento-info-grid">
+            <div class="info-item">
+                <span class="info-label">📅 Data</span>
+                <span class="info-value">{{ prossimo_evento[4] }}</span>
+            </div>
+            <div class="info-item">
+                <span class="info-label">💰 Prezzo</span>
+                <span class="info-value">€{{ "%.2f"|format(prossimo_evento[3]) }}</span>
+            </div>
+            <div class="info-item">
+                <span class="info-label">👥 Registrati</span>
+                <span class="info-value-large">{{ prossimo_evento[6] }}</span>
+            </div>
+        </div>
+        <a href="/admin/evento/{{ prossimo_evento[0] }}" class="btn-view-details">
+            Vedi Dettagli →
+        </a>
+    </div>
+    {% else %}
+    <div class="no-event-card">
+        <div class="no-event-icon">📭</div>
+        <h3>Nessun evento attivo</h3>
+        <p>Crea un nuovo evento per iniziare</p>
+        <a href="/admin/evento/crea" class="btn-crea-evento-link">
+            ➕ Crea Evento
+        </a>
+    </div>
+    {% endif %}
+
+    <!-- Statistiche Rapide -->
+    <div class="stats-grid">
+        <div class="stat-card">
+            <div class="stat-icon">📅</div>
+            <div class="stat-value">{{ totale_eventi }}</div>
+            <div class="stat-label">Eventi Totali</div>
+        </div>
+        <div class="stat-card">
+            <div class="stat-icon">👥</div>
+            <div class="stat-value">{{ totale_registrazioni }}</div>
+            <div class="stat-label">Registrazioni</div>
+        </div>
+    </div>
+
+    <!-- Ultimi Eventi -->
+    {% if ultimi_eventi|length > 0 %}
+    <div class="section-title">Ultimi Eventi</div>
+    <div class="eventi-preview-list">
+        {% for evento in ultimi_eventi %}
+        <div class="evento-preview-item" onclick="window.location.href='/admin/evento/{{ evento[0] }}'">
+            <div class="preview-header">
+                <span class="preview-nome">{{ evento[1] }}</span>
+                {% if evento[3] == 1 %}
+                <span class="badge-small active">Attivo</span>
+                {% else %}
+                <span class="badge-small">Passato</span>
+                {% endif %}
+            </div>
+            <div class="preview-details">
+                <span>📅 {{ evento[2] }}</span>
+                <span>👥 {{ evento[4] }}</span>
+            </div>
+        </div>
+        {% endfor %}
+    </div>
+    {% endif %}
+    </div>
+</div>
+
+<!-- Bottom Navigation Bar -->
+<div class="bottom-nav">
+    <a href="/admin/dashboard" class="nav-item active">
+        <span class="nav-icon">🏠</span>
+        <span class="nav-label">Dashboard</span>
+    </a>
+    <a href="/admin/statistiche" class="nav-item">
+        <span class="nav-icon">📊</span>
+        <span class="nav-label">Statistiche</span>
+    </a>
+    <a href="/admin/evento/crea" class="nav-item">
+        <span class="nav-icon">➕</span>
+        <span class="nav-label">Nuovo</span>
+    </a>
+    <a href="/admin/eventi" class="nav-item">
+        <span class="nav-icon">📅</span>
+        <span class="nav-label">Eventi</span>
+    </a>
+</div>
+</body>
+</html>
+

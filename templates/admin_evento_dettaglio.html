@@ -1,0 +1,347 @@
+<!DOCTYPE html>
+<html lang="it">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
+    <meta name="theme-color" content="#FFD700">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+    <meta name="apple-mobile-web-app-title" content="SAMU Admin">
+    <link rel="manifest" href="/manifest.json">
+    <link rel="apple-touch-icon" href="/static/icon.png">
+    <title>Dettaglio Evento - Admin</title>
+    <link rel="stylesheet" href="/static/style.css">
+    <link rel="stylesheet" href="/static/admin.css">
+    <link rel="stylesheet" href="/static/ux-enhancements.css">
+    <style>
+        .evento-dettaglio-header {
+            background: rgba(255,255,255,0.08);
+            border-radius: 12px;
+            padding: 20px;
+            margin-bottom: 25px;
+            border-left: 4px solid {% if evento[6] == 1 %}#FFD700{% else %}rgba(255, 215, 0, 0.3){% endif %};
+        }
+        
+        .evento-dettaglio-nome {
+            font-size: 24px;
+            font-weight: bold;
+            margin-bottom: 10px;
+        }
+        
+        .evento-dettaglio-info {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 15px;
+            margin-top: 15px;
+        }
+        
+        .info-box {
+            background: rgba(255,255,255,0.05);
+            padding: 12px;
+            border-radius: 8px;
+            text-align: center;
+        }
+        
+        .info-box-label {
+            font-size: 11px;
+            opacity: 0.6;
+            text-transform: uppercase;
+            margin-bottom: 5px;
+        }
+        
+        .info-box-value {
+            font-size: 18px;
+            font-weight: 600;
+            color: #FFD700;
+        }
+        
+        .back-button {
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            padding: 10px 15px;
+            background: rgba(255,255,255,0.1);
+            border-radius: 8px;
+            color: #fff;
+            text-decoration: none;
+            margin-bottom: 20px;
+            transition: all 0.3s ease;
+        }
+        
+        .back-button:hover {
+            background: rgba(255,255,255,0.2);
+        }
+    </style>
+</head>
+<body>
+<div class="overlay">
+    <div class="app-content">
+    <a href="/admin/eventi" class="back-button">
+        ← Torna agli Eventi
+    </a>
+
+    <h2>📋 Dettaglio Evento</h2>
+
+    <!-- Header Evento -->
+    <div class="evento-dettaglio-header">
+        <div class="evento-dettaglio-nome">{{ evento[1] }}</div>
+        {% if evento[2] %}
+        <div class="evento-desc">{{ evento[2] }}</div>
+        {% endif %}
+        <div class="evento-dettaglio-info">
+            <div class="info-box">
+                <div class="info-box-label">📅 Data Evento</div>
+                <div class="info-box-value">{{ evento[4] }}</div>
+            </div>
+            <div class="info-box">
+                <div class="info-box-label">💰 Prezzo</div>
+                <div class="info-box-value">€{{ "%.2f"|format(evento[3]) }}</div>
+            </div>
+            <div class="info-box">
+                <div class="info-box-label">👥 Registrati</div>
+                <div class="info-box-value">{{ totale_iscritti }}</div>
+            </div>
+            <div class="info-box">
+                <div class="info-box-label">📊 Stato</div>
+                <div class="info-box-value">
+                    {% if evento[6] == 1 %}Attivo{% else %}Passato{% endif %}
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Lista Registrati -->
+    <div class="search-section">
+        <h3>👥 Lista Registrati</h3>
+        
+        <div class="search-wrapper">
+            <input type="text" 
+                   id="search-input" 
+                   class="search-input" 
+                   placeholder="🔍 Cerca per nome, cognome, telefono...">
+            <span class="search-icon">🔍</span>
+        </div>
+        <div class="search-count" id="search-count"></div>
+        
+        <div class="list-view" id="registrati-list">
+            {% if registrati|length == 0 %}
+            <div class="no-results">
+                <div style="font-size: 48px; margin-bottom: 10px;">📭</div>
+                Nessun registrato per questo evento
+            </div>
+            {% else %}
+            {% for r in registrati %}
+            <div class="list-item" 
+                 data-id="{{ r[0] }}"
+                 data-nome="{{ r[1]|lower }}" 
+                 data-cognome="{{ r[2]|lower }}" 
+                 data-telefono="{{ r[3] }}">
+                <div class="list-item-header">
+                    <div class="list-item-name">👤 {{ r[1] }} {{ r[2] }}</div>
+                </div>
+                <div class="list-item-details">
+                    <div class="list-item-detail">
+                        <span class="list-item-detail-label">📱 Telefono</span>
+                        <span class="list-item-detail-value">{{ r[3] }}</span>
+                    </div>
+                    <div class="list-item-detail">
+                        <span class="list-item-detail-label">🎂 Fascia d'età</span>
+                        <span class="list-item-detail-value">{{ r[4] }}</span>
+                    </div>
+                    <div class="list-item-detail">
+                        <span class="list-item-detail-label">🕐 Orario arrivo</span>
+                        <span class="list-item-detail-value">{{ r[5] }}</span>
+                    </div>
+                    <div class="list-item-detail">
+                        <span class="list-item-detail-label">📅 Registrato il</span>
+                        <span class="list-item-detail-value">{{ r[6] }}</span>
+                    </div>
+                </div>
+                <div class="list-item-actions">
+                    <button class="btn-delete" onclick="deleteRegistrazione({{ r[0] }}, '{{ r[1] }} {{ r[2] }}')">
+                        🗑️ Elimina
+                    </button>
+                </div>
+            </div>
+            {% endfor %}
+            {% endif %}
+        </div>
+    </div>
+    </div>
+</div>
+
+<!-- Bottom Navigation Bar -->
+<div class="bottom-nav">
+    <a href="/admin/dashboard" class="nav-item">
+        <span class="nav-icon">🏠</span>
+        <span class="nav-label">Dashboard</span>
+    </a>
+    <a href="/admin/statistiche" class="nav-item">
+        <span class="nav-icon">📊</span>
+        <span class="nav-label">Statistiche</span>
+    </a>
+    <a href="/admin/evento/crea" class="nav-item">
+        <span class="nav-icon">➕</span>
+        <span class="nav-label">Nuovo</span>
+    </a>
+    <a href="/admin/eventi" class="nav-item">
+        <span class="nav-icon">📅</span>
+        <span class="nav-label">Eventi</span>
+    </a>
+</div>
+
+<!-- Toast Container -->
+<div id="toast-container"></div>
+
+<!-- Loading Overlay -->
+<div class="loading-overlay" id="loadingOverlay">
+    <div class="loading-content">
+        <div class="loading-spinner"></div>
+        <div>Caricamento...</div>
+    </div>
+</div>
+
+<script>
+// Toast Notification System
+function showToast(message, type = 'info') {
+    const toast = document.createElement('div');
+    toast.className = `toast ${type}`;
+    toast.textContent = message;
+    
+    const container = document.getElementById('toast-container');
+    container.appendChild(toast);
+    
+    setTimeout(() => {
+        toast.remove();
+    }, 3000);
+}
+
+// Elimina registrazione con feedback migliorato
+async function deleteRegistrazione(personaId, nomeCompleto) {
+    if (!confirm(`⚠️ Sei sicuro di voler eliminare la registrazione di "${nomeCompleto}"?\n\nQuesta azione non può essere annullata!`)) {
+        return;
+    }
+    
+    // Haptic feedback
+    if ('vibrate' in navigator) {
+        navigator.vibrate([20, 50, 20]);
+    }
+    
+    const item = document.querySelector(`.list-item[data-id="${personaId}"]`);
+    if (item) {
+        item.style.opacity = '0.5';
+        item.style.pointerEvents = 'none';
+        item.style.transition = 'all 0.3s ease';
+    }
+    
+    try {
+        const response = await fetch('/admin/delete', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify({ persona_id: personaId })
+        });
+        
+        const data = await response.json();
+        
+        if (data.ok) {
+            showToast(`✅ ${data.message}`, 'success');
+            if (item) {
+                item.style.transition = 'all 0.3s ease';
+                item.style.transform = 'translateX(-100%)';
+                item.style.opacity = '0';
+                setTimeout(() => {
+                    item.remove();
+                    updateSearchCount();
+                    setTimeout(() => window.location.reload(), 1000);
+                }, 300);
+            } else {
+                setTimeout(() => window.location.reload(), 1000);
+            }
+        } else {
+            showToast(`❌ Errore: ${data.error || 'Impossibile eliminare la registrazione'}`, 'error');
+            if (item) {
+                item.style.opacity = '1';
+                item.style.pointerEvents = 'auto';
+            }
+        }
+    } catch (error) {
+        showToast('❌ Errore di connessione', 'error');
+        if (item) {
+            item.style.opacity = '1';
+            item.style.pointerEvents = 'auto';
+        }
+    }
+}
+
+// Ricerca migliorata con contatore
+const searchInput = document.getElementById('search-input');
+if (searchInput) {
+    function updateSearchCount() {
+        const query = searchInput.value.toLowerCase().trim();
+        const items = document.querySelectorAll('.list-item');
+        let visibleCount = 0;
+        
+        items.forEach(item => {
+            if (item.style.display !== 'none') {
+                visibleCount++;
+            }
+        });
+        
+        const countEl = document.getElementById('search-count');
+        if (query) {
+            countEl.textContent = `Trovati: ${visibleCount} di ${items.length} registrati`;
+        } else {
+            countEl.textContent = `Totale: ${items.length} registrati`;
+        }
+    }
+    
+    searchInput.addEventListener('input', function(e) {
+        const query = e.target.value.toLowerCase().trim();
+        const items = document.querySelectorAll('.list-item');
+        let visibleCount = 0;
+        
+        items.forEach((item, index) => {
+            const nome = item.getAttribute('data-nome') || '';
+            const cognome = item.getAttribute('data-cognome') || '';
+            const telefono = item.getAttribute('data-telefono') || '';
+            const itemText = item.textContent.toLowerCase();
+            
+            const matches = !query || 
+                nome.includes(query) || 
+                cognome.includes(query) || 
+                telefono.includes(query) ||
+                itemText.includes(query);
+            
+            if (matches) {
+                item.style.display = 'block';
+                item.style.animationDelay = `${index * 0.05}s`;
+                visibleCount++;
+            } else {
+                item.style.display = 'none';
+            }
+        });
+        
+        let noResults = document.getElementById('no-results-msg');
+        if (query && visibleCount === 0) {
+            if (!noResults) {
+                noResults = document.createElement('div');
+                noResults.id = 'no-results-msg';
+                noResults.className = 'no-results';
+                noResults.innerHTML = '<div style="font-size: 48px; margin-bottom: 10px;">🔍</div>Nessun risultato trovato';
+                document.getElementById('registrati-list').appendChild(noResults);
+            }
+        } else if (noResults) {
+            noResults.remove();
+        }
+        
+        updateSearchCount();
+    });
+    
+    updateSearchCount();
+}
+</script>
+</body>
+</html>
+
