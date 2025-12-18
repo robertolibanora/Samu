@@ -24,24 +24,26 @@ def now_italia():
     """Restituisce la data/ora corrente nel timezone italiano"""
     return datetime.now(TIMEZONE_ITALIA)
 
-# Database
-DB_DIR = os.environ.get("DB_DIR", "/data")
-try:
-    os.makedirs(DB_DIR, exist_ok=True)
-    test_file = os.path.join(DB_DIR, ".test_write")
-    with open(test_file, 'w') as f:
-        f.write('test')
-    os.remove(test_file)
-except (OSError, PermissionError):
-    DB_DIR = os.path.dirname(os.path.abspath(__file__))
-    os.makedirs(DB_DIR, exist_ok=True)
+# ============================================================
+# BASE PATHS (ROBUSTI, NO PATH RELATIVI)
+# ============================================================
 
-DB_NAME = os.path.join(DB_DIR, "registrazioni.db")
+BASE_DIR = os.path.dirname(os.path.abspath(__file__))
+DATA_DIR = os.path.join(BASE_DIR, "data")
+os.makedirs(DATA_DIR, exist_ok=True)
+
+DB_NAME = os.path.join(DATA_DIR, "registrazioni.db")
+
+# ============================================================
+# DATABASE HELPERS
+# ============================================================
 
 def get_db_connection():
     """Crea una connessione al database"""
     conn = sqlite3.connect(DB_NAME, timeout=30.0)
-    conn.execute("PRAGMA journal_mode=WAL")
+    conn.row_factory = sqlite3.Row
+    conn.execute("PRAGMA foreign_keys = ON;")
+    conn.execute("PRAGMA journal_mode = WAL;")
     return conn
 
 # Rate limiting per login
