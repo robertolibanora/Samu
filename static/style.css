@@ -63,6 +63,9 @@ body {
     position: relative;
     /* Elegant gold accent border */
     box-shadow: inset 0 0 100px rgba(255, 215, 0, 0.03);
+    /* Estende il velo fino in fondo */
+    display: flex;
+    flex-direction: column;
 }
 
 /* Mobile app content container */
@@ -684,17 +687,18 @@ td {
    FOOTER
    ============================================ */
 .app-footer {
-    background: linear-gradient(180deg, rgba(0, 0, 0, 0.6) 0%, rgba(0, 0, 0, 0.8) 100%);
+    background: linear-gradient(180deg, rgba(0, 0, 0, 0.85) 0%, rgba(20, 15, 5, 0.9) 100%);
     backdrop-filter: blur(20px) saturate(180%);
     -webkit-backdrop-filter: blur(20px) saturate(180%);
     border-top: 2px solid;
     border-image: linear-gradient(90deg, transparent, rgba(255, 215, 0, 0.3), transparent) 1;
     padding: 18px 20px;
-    margin-top: 30px;
+    margin-top: auto;
     text-align: center;
     position: relative;
     z-index: 5;
     box-shadow: 0 -4px 16px rgba(0, 0, 0, 0.3);
+    width: 100%;
 }
 
 .app-footer p {
