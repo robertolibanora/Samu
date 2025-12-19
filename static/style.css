@@ -298,13 +298,17 @@ button:focus {
     justify-content: center;
     align-items: center;
     margin-bottom: 20px;
+    padding-left: 10px;
+    padding-right: 10px;
+    width: 100%;
 }
 
 .logo-box img {
-    max-width: 150px;
     width: 100%;
+    max-width: 100%;
     height: auto;
     display: block;
+    object-fit: contain;
 }
 
 /* ============================================
@@ -571,11 +575,13 @@ td {
     }
 
     .logo-box {
-        margin-bottom: 30px;
+        margin-bottom: 25px;
+        padding-left: 20px;
+        padding-right: 20px;
     }
 
     .logo-box img {
-        max-width: 200px;
+        max-width: 100%;
     }
 
     .success-content {
