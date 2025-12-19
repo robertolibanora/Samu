@@ -7,9 +7,12 @@
     display: flex;
     justify-content: center;
     align-items: center;
-    margin-bottom: 15px;
+    margin-bottom: 20px;
     padding-top: max(env(safe-area-inset-top), 10px);
+    padding-left: 10px;
+    padding-right: 10px;
     animation: fadeInDown 0.6s ease;
+    width: 100%;
 }
 
 @keyframes fadeInDown {
@@ -24,22 +27,25 @@
 }
 
 .admin-logo-box img {
-    max-width: 150px;
     width: 100%;
+    max-width: 100%;
     height: auto;
     display: block;
     filter: drop-shadow(0 0 10px rgba(255, 215, 0, 0.2));
+    object-fit: contain;
 }
 
 /* Tablet e Desktop */
 @media (min-width: 768px) {
     .admin-logo-box {
-        margin-bottom: 20px;
+        margin-bottom: 25px;
         padding-top: 15px;
+        padding-left: 20px;
+        padding-right: 20px;
     }
     
     .admin-logo-box img {
-        max-width: 200px;
+        max-width: 100%;
     }
 }
 
