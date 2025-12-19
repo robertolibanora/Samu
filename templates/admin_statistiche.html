@@ -106,6 +106,11 @@
         <div class="chart-title">Registrazioni per Evento</div>
         <canvas id="eventoChart"></canvas>
     </div>
+    {% else %}
+    <div class="no-results" style="margin-top: 20px;">
+        <div style="font-size: 48px; margin-bottom: 10px;">📊</div>
+        Nessuna registrazione disponibile
+    </div>
     {% endif %}
 
     <!-- Grafico Andamento Giornaliero -->
@@ -223,6 +228,14 @@ new Chart(orarioCtx, {
                     color: '#fff',
                     font: {
                         size: 11
+                    },
+                    stepSize: 1,
+                    precision: 0,
+                    callback: function(value) {
+                        if (Number.isInteger(value)) {
+                            return value;
+                        }
+                        return '';
                     }
                 },
                 grid: {
@@ -245,46 +258,99 @@ new Chart(orarioCtx, {
 });
 {% endif %}
 
-// Grafico Eventi
+// Grafico Eventi - Registrazioni per Data Evento
 {% if evento_stats|length > 0 %}
 const eventoCtx = document.getElementById('eventoChart').getContext('2d');
+
+// Dati grezzi dal backend
+const rawEventDates = [{% for stat in evento_stats %}'{{ stat[0] }}'{% if not loop.last %},{% endif %}{% endfor %}];
+const rawEventData = [{% for stat in evento_stats %}{{ stat[1] }}{% if not loop.last %},{% endif %}{% endfor %}];
+
+// Formatta le date in formato DD/MM per le etichette
+const formattedEventLabels = rawEventDates.map(dateStr => {
+    if (!dateStr) return 'N/A';
+    const [anno, mese, giorno] = dateStr.split('-');
+    return `${giorno}/${mese}`;
+});
+
 new Chart(eventoCtx, {
     type: 'bar',
     data: {
-        labels: [{% for stat in evento_stats %}'{{ stat[0][:20] }}{% if stat[0]|length > 20 %}...{% endif %}'{% if not loop.last %},{% endif %}{% endfor %}],
+        labels: formattedEventLabels,
         datasets: [{
-            label: 'Registrazioni',
-            data: [{% for stat in evento_stats %}{{ stat[1] }}{% if not loop.last %},{% endif %}{% endfor %}],
-            backgroundColor: 'rgba(255, 165, 0, 0.6)',
-            borderColor: '#FFA500',
-            borderWidth: 2
+            label: 'Persone registrate',
+            data: rawEventData,
+            backgroundColor: 'rgba(255, 215, 0, 0.7)',
+            borderColor: '#FFD700',
+            borderWidth: 2,
+            borderRadius: 4
         }]
     },
     options: {
         responsive: true,
         maintainAspectRatio: false,
-        indexAxis: 'y',
         plugins: {
             legend: {
                 display: false
+            },
+            tooltip: {
+                backgroundColor: 'rgba(0, 0, 0, 0.85)',
+                titleColor: '#FFD700',
+                bodyColor: '#fff',
+                borderColor: '#FFD700',
+                borderWidth: 1,
+                padding: 12,
+                displayColors: true,
+                callbacks: {
+                    title: function(context) {
+                        const dataIndex = context[0].dataIndex;
+                        const fullDate = rawEventDates[dataIndex];
+                        if (!fullDate) return 'Data non disponibile';
+                        const [anno, mese, giorno] = fullDate.split('-');
+                        return `${giorno}/${mese}/${anno}`;
+                    },
+                    label: function(context) {
+                        const value = context.parsed.y;
+                        return `${value} ${value === 1 ? 'persona' : 'persone'}`;
+                    }
+                }
             }
         },
         scales: {
             y: {
+                beginAtZero: true,
                 ticks: {
-                    color: '#fff'
+                    color: '#fff',
+                    font: {
+                        size: 11
+                    },
+                    stepSize: 1,
+                    precision: 0,
+                    callback: function(value) {
+                        // Mostra solo numeri interi
+                        if (Number.isInteger(value)) {
+                            return value;
+                        }
+                        return '';
+                    }
                 },
                 grid: {
-                    color: 'rgba(255, 255, 255, 0.1)'
+                    color: 'rgba(255, 255, 255, 0.1)',
+                    lineWidth: 1
                 }
             },
             x: {
-                beginAtZero: true,
                 ticks: {
-                    color: '#fff'
+                    color: '#fff',
+                    font: {
+                        size: 10
+                    },
+                    maxRotation: 45,
+                    minRotation: 0
                 },
                 grid: {
-                    color: 'rgba(255, 255, 255, 0.1)'
+                    color: 'rgba(255, 255, 255, 0.1)',
+                    display: false
                 }
             }
         }

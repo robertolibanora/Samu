@@ -489,13 +489,13 @@ def admin_statistiche():
         """)
         orario_stats = c.fetchall()
         
-        # Registrazioni per evento
+        # Registrazioni per evento (con data evento)
         c.execute("""
-            SELECT e.nome, COUNT(r.id) as count
+            SELECT e.data_evento, COUNT(r.id) as count
             FROM eventi e
             LEFT JOIN registrazioni r ON e.id = r.evento_id
-            GROUP BY e.id, e.nome
-            ORDER BY e.data_evento DESC
+            GROUP BY e.id, e.data_evento
+            ORDER BY e.data_evento ASC
         """)
         evento_stats = c.fetchall()
         
