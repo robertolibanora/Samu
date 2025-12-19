@@ -24,7 +24,7 @@
 }
 
 .admin-logo-box img {
-    max-width: 80px;
+    max-width: 150px;
     width: 100%;
     height: auto;
     display: block;
@@ -39,7 +39,7 @@
     }
     
     .admin-logo-box img {
-        max-width: 100px;
+        max-width: 200px;
     }
 }
 

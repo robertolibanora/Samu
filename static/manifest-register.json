@@ -1,6 +1,6 @@
 {
-  "name": "SAMU Registrazione",
-  "short_name": "SAMU Registra",
+  "name": "SAMU",
+  "short_name": "SAMU",
   "description": "Registrazione eventi SAMU",
   "start_url": "/",
   "display": "standalone",

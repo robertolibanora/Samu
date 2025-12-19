@@ -1,6 +1,6 @@
 {
-  "name": "SAMU Admin",
-  "short_name": "SAMU Admin",
+  "name": "SAMU",
+  "short_name": "SAMU",
   "description": "Gestione eventi SAMU - Area Admin",
   "start_url": "/admin/login",
   "display": "standalone",
