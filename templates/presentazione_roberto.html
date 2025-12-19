@@ -1,0 +1,276 @@
+<!DOCTYPE html>
+<html lang="it">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
+    <meta name="theme-color" content="#FFD700">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+    <meta name="apple-mobile-web-app-title" content="SAMU">
+    <meta name="mobile-web-app-capable" content="yes">
+    <meta name="application-name" content="SAMU">
+    <title>Chi Sono - Roberto Libanora</title>
+    <link rel="stylesheet" href="/static/style.css">
+    <link rel="stylesheet" href="/static/ux-enhancements.css">
+    <link rel="stylesheet" href="/static/pwa-enhancements.css">
+    <script src="/static/pwa-init.js" defer></script>
+    <style>
+        .presentazione-container {
+            max-width: 800px;
+            margin: 0 auto;
+            padding: 20px 15px;
+        }
+
+        .bio-card {
+            background: linear-gradient(135deg, rgba(255, 255, 255, 0.08) 0%, rgba(255, 255, 255, 0.04) 100%);
+            border-radius: 20px;
+            padding: 30px 20px;
+            margin-bottom: 25px;
+            border-left: 4px solid;
+            border-image: linear-gradient(180deg, #FFD700, #FFA500) 1;
+            backdrop-filter: blur(20px) saturate(180%);
+            -webkit-backdrop-filter: blur(20px) saturate(180%);
+            box-shadow: 0 8px 24px rgba(0, 0, 0, 0.4),
+                        0 0 0 1px rgba(255, 215, 0, 0.1),
+                        inset 0 1px 0 rgba(255, 255, 255, 0.05);
+            animation: slideIn 0.5s ease;
+        }
+
+        @keyframes slideIn {
+            from {
+                opacity: 0;
+                transform: translateY(20px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .bio-header {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            text-align: center;
+            gap: 20px;
+            margin-bottom: 25px;
+        }
+
+        .bio-photo {
+            width: 140px;
+            height: 140px;
+            border-radius: 50%;
+            object-fit: cover;
+            border: 3px solid rgba(255, 215, 0, 0.5);
+            box-shadow: 0 8px 25px rgba(255, 215, 0, 0.3),
+                        0 0 30px rgba(255, 215, 0, 0.2);
+        }
+
+        .bio-title h1 {
+            font-size: 28px;
+            font-weight: 700;
+            margin: 0 0 8px 0;
+            color: #FFD700;
+            text-shadow: 0 0 20px rgba(255, 215, 0, 0.4);
+            letter-spacing: 0.5px;
+        }
+
+        .bio-title h2 {
+            font-size: 16px;
+            color: rgba(255, 255, 255, 0.8);
+            margin: 0;
+            font-weight: 500;
+        }
+
+        .bio-text {
+            color: rgba(255, 255, 255, 0.9);
+            line-height: 1.7;
+        }
+
+        .bio-text p {
+            font-size: 15px;
+            margin-bottom: 18px;
+        }
+
+        .bio-text p strong {
+            color: #FFD700;
+            font-weight: 600;
+        }
+
+        .bio-text ul {
+            list-style: none;
+            padding-left: 0;
+            margin: 20px 0;
+        }
+
+        .bio-text ul li {
+            margin-bottom: 12px;
+            padding-left: 25px;
+            position: relative;
+            font-size: 15px;
+            color: rgba(255, 255, 255, 0.85);
+        }
+
+        .bio-text ul li::before {
+            content: '•';
+            color: #FFD700;
+            font-weight: bold;
+            font-size: 20px;
+            position: absolute;
+            left: 0;
+            top: -2px;
+        }
+
+        .cta-line {
+            text-align: center;
+            margin-top: 30px;
+            padding-top: 25px;
+            border-top: 1px solid rgba(255, 215, 0, 0.2);
+            color: rgba(255, 255, 255, 0.8);
+            font-size: 15px;
+            line-height: 1.8;
+        }
+
+        .cta-line a {
+            color: #FFD700;
+            text-decoration: none;
+            font-weight: 600;
+            transition: all 0.3s ease;
+            display: inline-block;
+            margin: 5px 0;
+        }
+
+        .cta-line a:hover {
+            color: #FFA500;
+            text-shadow: 0 0 10px rgba(255, 215, 0, 0.5);
+        }
+
+        .back-button {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
+            padding: 12px 20px;
+            background: linear-gradient(135deg, rgba(255, 215, 0, 0.2) 0%, rgba(255, 215, 0, 0.12) 100%);
+            border: 2px solid #FFD700;
+            border-radius: 12px;
+            color: #FFD700;
+            text-decoration: none;
+            margin-bottom: 25px;
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+            font-weight: 600;
+            letter-spacing: 0.3px;
+            box-shadow: 0 4px 12px rgba(255, 215, 0, 0.2),
+                        inset 0 1px 0 rgba(255, 255, 255, 0.1);
+        }
+
+        .back-button:hover {
+            background: linear-gradient(135deg, rgba(255, 215, 0, 0.3) 0%, rgba(255, 215, 0, 0.2) 100%);
+            transform: translateY(-2px);
+            box-shadow: 0 6px 20px rgba(255, 215, 0, 0.3),
+                        inset 0 1px 0 rgba(255, 255, 255, 0.15);
+        }
+
+        @media (min-width: 768px) {
+            .presentazione-container {
+                padding: 30px 20px;
+            }
+
+            .bio-card {
+                padding: 40px 35px;
+            }
+
+            .bio-header {
+                flex-direction: row;
+                text-align: left;
+                gap: 30px;
+            }
+
+            .bio-photo {
+                width: 180px;
+                height: 180px;
+            }
+
+            .bio-title h1 {
+                font-size: 32px;
+            }
+
+            .bio-title h2 {
+                font-size: 18px;
+            }
+
+            .bio-text p {
+                font-size: 16px;
+            }
+
+            .bio-text ul li {
+                font-size: 16px;
+            }
+        }
+    </style>
+</head>
+<body>
+<div class="overlay">
+    <div class="app-content">
+        <div class="presentazione-container">
+            <a href="/register" class="back-button">
+                ← Torna alla Registrazione
+            </a>
+
+            <div class="bio-card">
+                <div class="bio-header">
+                    <img src="/static/profile.png" alt="Roberto Libanora" class="bio-photo" onerror="this.style.display='none'">
+                    <div class="bio-title">
+                        <h1>Roberto Libanora</h1>
+                        <h2>Sviluppatore & Consulente Digitale</h2>
+                    </div>
+                </div>
+
+                <div class="bio-text">
+                    <p>
+                        Mi occupo di progettare e sviluppare <strong>soluzioni digitali su misura</strong> per professionisti e piccole imprese.
+                        Il mio obiettivo è creare strumenti chiari, automatizzati e intuitivi che semplifichino la gestione quotidiana del lavoro.
+                    </p>
+
+                    <p>
+                        Unisco competenze in <strong>management e data science</strong> con l'esperienza pratica nello sviluppo web,
+                        realizzando applicazioni e dashboard che organizzano informazioni e migliorano i processi.
+                    </p>
+
+                    <p>
+                        Posso realizzare:
+                    </p>
+
+                    <ul>
+                        <li>Web app per gestire clienti, appuntamenti e documenti</li>
+                        <li>Sistemi gestionali su misura per attività locali</li>
+                        <li>Automazioni per ridurre tempi e passaggi manuali</li>
+                        <li>Interfacce responsive ottimizzate per smartphone</li>
+                    </ul>
+
+                    <p>
+                        Credo nella tecnologia come <strong>strumento pratico e umano</strong>: utile solo quando semplifica davvero.
+                        Ogni progetto nasce con un'idea chiara — portare ordine e valore attraverso soluzioni digitali concrete.
+                    </p>
+                </div>
+
+                <div class="cta-line">
+                    Vuoi semplificare la gestione del tuo lavoro?<br><br>
+                    <a href="mailto:roberto.libanora@sartosrl.com">Scrivimi una mail per parlarne</a><br>
+                    <a href="https://www.linkedin.com/in/roberto-libanora-71a3a02b8">Scrivimi su LinkedIn per parlarne</a>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Toast Container -->
+<div id="toast-container"></div>
+
+<script>
+// Page transition
+document.body.classList.add('page-transition');
+</script>
+</body>
+</html>
+

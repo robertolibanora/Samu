@@ -713,6 +713,14 @@ td {
     font-weight: 600;
     text-shadow: 0 0 10px rgba(255, 215, 0, 0.4);
     opacity: 1;
+    text-decoration: none;
+    transition: all 0.3s ease;
+    cursor: pointer;
+}
+
+.app-footer .footer-name:hover {
+    color: #FFA500;
+    text-shadow: 0 0 15px rgba(255, 215, 0, 0.6);
 }
 
 /* ============================================

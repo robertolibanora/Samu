@@ -207,6 +207,14 @@ def landing():
     return render_template("landing.html")
 
 # ---------------------------
+# ROUTE: PRESENTAZIONE ROBERTO
+# ---------------------------
+@app.route("/presentazione")
+def presentazione_roberto():
+    """Pagina di presentazione di Roberto Libanora"""
+    return render_template("presentazione_roberto.html")
+
+# ---------------------------
 # ROUTE: REGISTRAZIONE
 # ---------------------------
 @app.route("/register", methods=["GET", "POST"])
