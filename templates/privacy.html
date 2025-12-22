@@ -1,0 +1,206 @@
+<!DOCTYPE html>
+<html lang="it">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
+    <meta name="theme-color" content="#FFD700">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+    <meta name="apple-mobile-web-app-title" content="SAMU - Privacy">
+    <meta name="mobile-web-app-capable" content="yes">
+    <meta name="application-name" content="SAMU">
+    <link rel="manifest" href="/manifest-register.json">
+    <link rel="apple-touch-icon" href="/static/icons/icon-152x152.png">
+    <link rel="apple-touch-icon" sizes="72x72" href="/static/icons/icon-72x72.png">
+    <link rel="apple-touch-icon" sizes="96x96" href="/static/icons/icon-96x96.png">
+    <link rel="apple-touch-icon" sizes="128x128" href="/static/icons/icon-128x128.png">
+    <link rel="apple-touch-icon" sizes="144x144" href="/static/icons/icon-144x144.png">
+    <link rel="apple-touch-icon" sizes="152x152" href="/static/icons/icon-152x152.png">
+    <link rel="apple-touch-icon" sizes="192x192" href="/static/icons/icon-192x192.png">
+    <link rel="apple-touch-icon" sizes="384x384" href="/static/icons/icon-384x384.png">
+    <link rel="apple-touch-icon" sizes="512x512" href="/static/icons/icon-512x512.png">
+    <link rel="icon" type="image/png" sizes="192x192" href="/static/icons/icon-192x192.png">
+    <link rel="icon" type="image/png" sizes="512x512" href="/static/icons/icon-512x512.png">
+    <title>Informativa sulla Privacy - SAMU</title>
+    <link rel="stylesheet" href="/static/style.css">
+    <link rel="stylesheet" href="/static/ux-enhancements.css">
+    <link rel="stylesheet" href="/static/pwa-enhancements.css">
+    <script src="/static/pwa-init.js" defer></script>
+    <style>
+        .privacy-content {
+            background: linear-gradient(135deg, rgba(255, 255, 255, 0.08) 0%, rgba(255, 255, 255, 0.04) 100%);
+            border-radius: 20px;
+            padding: 24px;
+            margin-bottom: 25px;
+            backdrop-filter: blur(30px) saturate(180%);
+            -webkit-backdrop-filter: blur(30px) saturate(180%);
+            border: 1px solid rgba(255, 215, 0, 0.15);
+            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.4),
+                        0 0 0 1px rgba(255, 215, 0, 0.1),
+                        inset 0 1px 0 rgba(255, 255, 255, 0.05);
+        }
+        
+        .privacy-content h3 {
+            color: #FFD700;
+            font-size: 20px;
+            font-weight: 700;
+            margin: 25px 0 15px 0;
+            padding-bottom: 10px;
+            border-bottom: 2px solid rgba(255, 215, 0, 0.3);
+        }
+        
+        .privacy-content h3:first-child {
+            margin-top: 0;
+        }
+        
+        .privacy-content p {
+            font-size: 15px;
+            line-height: 1.8;
+            margin-bottom: 15px;
+            color: rgba(255, 255, 255, 0.9);
+            text-align: justify;
+        }
+        
+        .privacy-content ul {
+            margin: 15px 0;
+            padding-left: 20px;
+        }
+        
+        .privacy-content li {
+            font-size: 15px;
+            line-height: 1.8;
+            margin-bottom: 10px;
+            color: rgba(255, 255, 255, 0.9);
+        }
+        
+        .privacy-content li::marker {
+            color: #FFD700;
+        }
+        
+        .back-link {
+            display: inline-block;
+            margin-top: 20px;
+            padding: 12px 24px;
+            background: linear-gradient(135deg, rgba(255, 215, 0, 0.2) 0%, rgba(255, 215, 0, 0.1) 100%);
+            border: 2px solid rgba(255, 215, 0, 0.4);
+            border-radius: 12px;
+            color: #FFD700;
+            text-decoration: none;
+            font-weight: 600;
+            transition: all 0.3s ease;
+            text-align: center;
+        }
+        
+        .back-link:hover {
+            background: linear-gradient(135deg, rgba(255, 215, 0, 0.3) 0%, rgba(255, 215, 0, 0.2) 100%);
+            border-color: rgba(255, 215, 0, 0.6);
+            transform: translateY(-2px);
+        }
+        
+        @media (min-width: 768px) {
+            .privacy-content {
+                max-width: 800px;
+                margin: 0 auto 30px auto;
+                padding: 40px;
+            }
+            
+            .privacy-content h3 {
+                font-size: 24px;
+            }
+            
+            .privacy-content p,
+            .privacy-content li {
+                font-size: 16px;
+            }
+        }
+    </style>
+</head>
+<body>
+<div class="overlay">
+    <div class="app-content">
+    <!-- LOGO CENTRALE -->
+    <div class="logo-box">
+        <img src="/static/logo.png" alt="Logo SAMU" onerror="this.style.display='none'">
+    </div>
+
+    <h2>Informativa sulla Privacy</h2>
+
+    <div class="privacy-content">
+        <h3>Trattamento dei Dati Personali</h3>
+        <p>
+            I dati personali forniti dall'utente (nome, cognome, recapiti e informazioni relative alla partecipazione all'evento) sono raccolti e trattati esclusivamente per finalità organizzative, logistiche e di controllo degli accessi agli eventi.
+        </p>
+
+        <h3>Base Giuridica e Principi</h3>
+        <p>
+            Il trattamento dei dati avviene nel rispetto del Regolamento (UE) 2016/679 (GDPR) e dei principi di:
+        </p>
+        <ul>
+            <li>liceità</li>
+            <li>correttezza</li>
+            <li>trasparenza</li>
+            <li>minimizzazione dei dati</li>
+            <li>limitazione delle finalità</li>
+        </ul>
+
+        <h3>Condivisione e Utilizzo dei Dati</h3>
+        <p>
+            I dati non vengono ceduti, venduti o condivisi con soggetti terzi e non sono utilizzati per attività di profilazione o marketing automatizzato.
+        </p>
+
+        <h3>Conservazione dei Dati</h3>
+        <p>
+            I dati sono conservati solo per il tempo strettamente necessario allo svolgimento dell'evento e alle eventuali verifiche organizzative successive, dopodiché vengono cancellati o anonimizzati.
+        </p>
+
+        <h3>Sicurezza dei Dati</h3>
+        <p>
+            Il trattamento è effettuato mediante strumenti informatici protetti, con misure tecniche e organizzative adeguate a garantire la sicurezza, l'integrità e la riservatezza dei dati.
+        </p>
+
+        <h3>Accesso ai Dati</h3>
+        <p>
+            L'accesso ai dati è consentito unicamente a personale autorizzato e incaricato dall'organizzatore dell'evento.
+        </p>
+
+        <h3>Diritti dell'Utente</h3>
+        <p>
+            L'utente può esercitare in qualsiasi momento i diritti previsti dagli articoli 15-22 del GDPR, tra cui:
+        </p>
+        <ul>
+            <li>accesso ai dati personali</li>
+            <li>rettifica o aggiornamento</li>
+            <li>cancellazione ("diritto all'oblio")</li>
+            <li>limitazione o opposizione al trattamento</li>
+        </ul>
+        <p>
+            Le richieste possono essere inoltrate direttamente all'organizzatore dell'evento.
+        </p>
+
+        <h3>Consenso</h3>
+        <p>
+            La mancata accettazione della presente informativa comporta l'impossibilità di completare la registrazione all'evento.
+        </p>
+        <p>
+            Registrandosi, l'utente dichiara di aver letto, compreso e accettato la presente informativa.
+        </p>
+    </div>
+
+    <div style="text-align: center;">
+        <a href="/register" class="back-link">Torna alla Registrazione</a>
+    </div>
+    </div>
+    
+    <!-- Footer -->
+    <footer class="app-footer">
+        <p>Creato da <a href="/presentazione" class="footer-name">Roberto Libanora</a></p>
+    </footer>
+</div>
+
+<script>
+    // Aggiungi classe page-transition per animazione
+    document.body.classList.add('page-transition');
+</script>
+</body>
+</html>
+

@@ -215,6 +215,14 @@ def presentazione_roberto():
     return render_template("presentazione_roberto.html")
 
 # ---------------------------
+# ROUTE: PRIVACY
+# ---------------------------
+@app.route("/privacy")
+def privacy():
+    """Pagina informativa sulla privacy"""
+    return render_template("privacy.html")
+
+# ---------------------------
 # ROUTE: REGISTRAZIONE
 # ---------------------------
 @app.route("/register", methods=["GET", "POST"])
@@ -251,6 +259,11 @@ def register():
             return render_template("register.html", evento=evento_attivo, error="Fascia d'età obbligatoria.")
         if not orario_arrivo:
             return render_template("register.html", evento=evento_attivo, error="Orario di arrivo obbligatorio.")
+        
+        # Validazione consenso privacy
+        privacy_consent = request.form.get("privacy_consent")
+        if not privacy_consent:
+            return render_template("register.html", evento=evento_attivo, error="È necessario accettare l'informativa sulla privacy per completare la registrazione.")
 
         # Validazione telefono: deve iniziare con 3
         telefono_pulito = ''.join(filter(str.isdigit, telefono))
@@ -789,5 +802,5 @@ def offline_page():
     return render_template("offline.html")
 
 if __name__ == "__main__":
-    port = int(os.environ.get("PORT", 5002))
+    port = int(os.environ.get("PORT", 5005))
     app.run(debug=False, port=port, host="0.0.0.0")

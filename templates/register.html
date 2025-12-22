@@ -104,6 +104,25 @@
             color: #FFD700;
         }
         
+        .privacy-checkbox-container {
+            transition: all 0.3s ease;
+        }
+        
+        .privacy-checkbox-container:has(input:focus) {
+            border-color: rgba(255, 215, 0, 0.4);
+            box-shadow: 0 0 0 3px rgba(255, 215, 0, 0.1);
+        }
+        
+        .privacy-checkbox-container label {
+            -webkit-user-select: text;
+            user-select: text;
+        }
+        
+        .privacy-checkbox-container input[type="checkbox"] {
+            margin-top: 3px;
+            cursor: pointer;
+        }
+        
         .eta-fascia-group {
             display: grid;
             grid-template-columns: repeat(auto-fit, minmax(100px, 1fr));
@@ -253,6 +272,17 @@
         </div>
 
         <button type="submit">Completa Registrazione</button>
+        
+        <div class="privacy-checkbox-container" style="margin-top: 20px; padding: 15px; background: rgba(255, 255, 255, 0.03); border-radius: 12px; border: 1px solid rgba(255, 215, 0, 0.1);">
+            <label style="display: flex; align-items: flex-start; cursor: pointer; font-size: 14px; line-height: 1.6; color: rgba(255, 255, 255, 0.9);">
+                <input type="checkbox" name="privacy_consent" required id="privacy-consent" style="width: auto; margin: 0 12px 0 0; margin-top: 3px; min-width: 20px; min-height: 20px; cursor: pointer; accent-color: #FFD700; flex-shrink: 0;">
+                <span>
+                   Confermo di aver letto e compreso l'informativa sulla privacy.
+                    <a href="/privacy" target="_blank" style="color: #FFD700; text-decoration: underline; font-weight: 600;">Informativa sulla privacy</a>
+                </span>
+            </label>
+            <div class="input-feedback" id="privacy-feedback"></div>
+        </div>
     </form>
 
     {% endif %}
@@ -420,6 +450,24 @@ document.addEventListener('DOMContentLoaded', function() {
                 return false;
             }
             
+            // Validazione checkbox privacy
+            const privacyCheckbox = document.getElementById('privacy-consent');
+            if (!privacyCheckbox.checked) {
+                e.preventDefault();
+                const feedback = document.getElementById('privacy-feedback');
+                feedback.textContent = 'È necessario accettare l\'informativa sulla privacy';
+                feedback.className = 'input-feedback show invalid';
+                hapticFeedback('error');
+                
+                // Scroll alla checkbox
+                privacyCheckbox.scrollIntoView({ 
+                    behavior: 'smooth', 
+                    block: 'center' 
+                });
+                privacyCheckbox.focus();
+                return false;
+            }
+            
             // Mostra loading state
             const submitBtn = form.querySelector('button[type="submit"]');
             if (submitBtn) {
@@ -428,6 +476,19 @@ document.addEventListener('DOMContentLoaded', function() {
                 hapticFeedback('medium');
             }
         });
+        
+        // Feedback visivo sulla checkbox privacy
+        const privacyCheckbox = document.getElementById('privacy-consent');
+        if (privacyCheckbox) {
+            privacyCheckbox.addEventListener('change', function() {
+                const feedback = document.getElementById('privacy-feedback');
+                if (this.checked) {
+                    feedback.className = 'input-feedback';
+                    feedback.textContent = '';
+                    hapticFeedback('light');
+                }
+            });
+        }
     }
     
     // Aggiungi classe page-transition per animazione
