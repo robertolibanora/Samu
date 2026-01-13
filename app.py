@@ -14,7 +14,9 @@ except ImportError:
     pass
 
 app = Flask(__name__)
-app.secret_key = "nonservepasswords"
+# Secret key da variabile d'ambiente, genera una random se non presente (non sicuro per produzione!)
+secret_key_env = os.environ.get("SECRET_KEY", "").strip()
+app.secret_key = secret_key_env if secret_key_env else os.urandom(32).hex()
 app.permanent_session_lifetime = timedelta(hours=24)
 
 # Timezone italiano
